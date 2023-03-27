@@ -35,7 +35,7 @@ export const calculateNewGapCoords = (prevGapCoords: BoxCoordinates, frameCount:
 
     if (xPipeLoc <= -PIPE_WIDTH) {
         yGapLoc = randomizeYGapLocation();
-        xPipeLoc = GAME_WIDTH + PIPE_WIDTH;
+        xPipeLoc = GAME_WIDTH;
     }
     else {
         xPipeLoc = prevGapCoords.topLeft.x - frameCount;
@@ -54,5 +54,6 @@ export const calculateNewBirdCoords = (prevGapCoords: BoxCoordinates, frameCount
     }
     return calculateBirdCoords(yBirdLoc);
 }
+
 
 

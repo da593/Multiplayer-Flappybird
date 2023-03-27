@@ -10,11 +10,7 @@ export function GameState() {
     const [hasCollided,setHasCollided] = useState(false);
     const [hasKeyClicked,setHasKeyClicked] = useState(false);
 
-    const [hasScored,setHasScored] = useState(false);
-
-    const requestRef = useRef(0);
-    const previousTimeRef = useRef(0);
-
+    const [score,setScore] = useState(0);
     const handleClick = (e:KeyboardEvent) => {
         if (e.key === "w") {
             setHasKeyClicked(true);
@@ -45,11 +41,14 @@ export function GameState() {
         if (detectCollision(birdCoords,gapCoords)) {
             setHasCollided(true);
         }
+        else if (birdCoords.topLeft.x === gapCoords.topRight.x + 1) {
+            setScore(score + 1)
+        }
     },[gapCoords,birdCoords])
 
 
     return (
-        <BoardGame width={GAME_WIDTH} height={GAME_HEIGHT} gapCoords={gapCoords} birdCoords={birdCoords}/>
+        <BoardGame width={GAME_WIDTH} height={GAME_HEIGHT} gapCoords={gapCoords} birdCoords={birdCoords} score={score}/>
     )
 }
 

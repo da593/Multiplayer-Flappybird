@@ -41,9 +41,14 @@ li {
   display: inline-block;
 }
 
-.navigation-menu, #bird, #pipe {
+.navigation-menu, #bird, #pipe, .score {
   z-index: 1;
   position: absolute;
+}
+
+.score {
+  color: white;
+  font-size: 2rem;
 }
 
 #background-layer {

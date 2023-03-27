@@ -23,3 +23,7 @@ export interface BirdCoordProps {
     birdCoords:BoxCoordinates;
 }
 
+export interface ScoreProps {
+    score: number
+}
+
