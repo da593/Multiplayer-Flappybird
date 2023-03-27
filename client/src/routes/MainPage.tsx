@@ -1,8 +1,8 @@
 import * as React from "react";
 import ClientAdapter from 'adapters/ClientAdapter'
 import { Link } from "react-router-dom";
-import { BoardBackground } from "components/BoardBackground";
-import {GAME_WIDTH,GAME_HEIGHT} from "components/GameConstants";
+import { BoardBackground } from "GameBoard/background";
+import {GAME_WIDTH,GAME_HEIGHT} from "GameState/constants";
 
 
 export function MainPage() {

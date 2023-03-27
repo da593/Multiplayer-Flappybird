@@ -12,7 +12,7 @@ import 'styles/nav.css';
 import {MainPage} from 'routes/MainPage';
 import {GamePage} from 'routes/GamePage';
 import {ErrorPage} from "routes/ErrorPage";
-import {Navbar} from 'components/Navbar';
+import {Navbar} from 'Navbar/Navbar';
 
 
 

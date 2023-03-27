@@ -1,7 +1,8 @@
 import React,{useEffect, useRef} from 'react';
-import { BoardSize } from './BoardGame';
+import { GameSizeProps } from 'GameState/types';
 
-export function BoardBackground(props:BoardSize) {
+
+export function BoardBackground(props:GameSizeProps) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     

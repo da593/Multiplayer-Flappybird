@@ -1,5 +1,5 @@
 import React from 'react';
-import { GameState } from 'components/GameState';
+import { GameState } from 'GameState';
 
 export function GamePage() {
 
