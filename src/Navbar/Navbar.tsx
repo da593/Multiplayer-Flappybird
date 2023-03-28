@@ -11,7 +11,7 @@ export function Navbar() {
                             <Link to="/">FlappyBlock</Link>
                         </li>
                         <li>
-                            <Link to="/">Main page</Link>
+                            <Link to="/">Main Menu</Link>
                         </li>
                     </div>
                 </ul>

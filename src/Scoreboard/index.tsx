@@ -1,9 +1,9 @@
-import { GameSizeProps, ScoreProps } from 'GameState/types';
+import { ScoreProps } from 'GameState/types';
 import React from 'react';
 
 type ScoreboardProps = ScoreProps
 export function Scoreboard(props:ScoreboardProps) {
     return (
-        <div className="score">{props.score}</div>
+        <div className="canvas-item score">{props.score}</div>
     )
 }

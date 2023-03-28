@@ -27,3 +27,7 @@ export interface ScoreProps {
     score: number
 }
 
+export interface CollisionProps {
+    hasCollided: boolean;
+}
+

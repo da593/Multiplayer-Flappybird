@@ -4,6 +4,7 @@ import { GameState } from 'GameState';
 export function GamePage() {
 
     return (
+        
         <div className="body-container">
             <GameState />
         </div>

@@ -48,7 +48,7 @@ export function GameState() {
 
 
     return (
-        <BoardGame width={GAME_WIDTH} height={GAME_HEIGHT} gapCoords={gapCoords} birdCoords={birdCoords} score={score}/>
+        <BoardGame width={GAME_WIDTH} height={GAME_HEIGHT} gapCoords={gapCoords} birdCoords={birdCoords} score={score} hasCollided={hasCollided}/>
     )
 }
 

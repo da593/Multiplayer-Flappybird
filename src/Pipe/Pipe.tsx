@@ -33,6 +33,6 @@ export function Pipe(props: PipeProps) {
 
 
     return (
-        <canvas id="pipe" width={props.width} height={props.height} ref={canvasRef} />
+        <canvas className="canvas-item" width={props.width} height={props.height} ref={canvasRef} />
     )
 }

@@ -2,9 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   createBrowserRouter,
-  createRoutesFromElements,
   RouterProvider,
-  Route,
 } from "react-router-dom";
 
 import 'styles/index.css';
@@ -28,6 +26,7 @@ import {Navbar} from 'Navbar/Navbar';
 //   )
 // );
 
+
 let router = createBrowserRouter([
   {
     path: "/",
@@ -36,7 +35,7 @@ let router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <MainPage/>,
+        element: <MainPage />,
       },
       {
         path: "gamepage",

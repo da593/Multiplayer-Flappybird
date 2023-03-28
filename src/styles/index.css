@@ -37,18 +37,33 @@ li {
   
 }
 
-.canvas-container {
-  display: inline-block;
+.canvas-container, .canvas-container-default {
+  display: flex;
+  justify-content: center;
 }
 
-.navigation-menu, #bird, #pipe, .score {
+.canvas-container {
+  align-items: center;
+}
+
+.canvas-item {
   z-index: 1;
   position: absolute;
+}
+
+.navigation-menu {
+  display: flex;
+  align-items: center;
+}
+
+.nav-list > li{
+
 }
 
 .score {
   color: white;
   font-size: 2rem;
+
 }
 
 #background-layer {

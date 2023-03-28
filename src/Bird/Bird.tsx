@@ -25,6 +25,6 @@ export function Bird(props:BirdProps) {
     },[props])
 
     return (
-        <canvas id="bird" width={props.width} height={props.height} ref={canvasRef}/>
+        <canvas className="canvas-item" width={props.width} height={props.height} ref={canvasRef}/>
     )
 }
