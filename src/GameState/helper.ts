@@ -47,7 +47,7 @@ export const calculateNewGapCoords = (prevGapCoords: BoxCoordinates, frameCount:
 export const calculateNewBirdCoords = (prevGapCoords: BoxCoordinates, frameCount:number, hasKeyClicked:boolean) => {
     let yBirdLoc = prevGapCoords.topLeft.y;
     if (hasKeyClicked === true && yBirdLoc > 0) {
-        yBirdLoc = yBirdLoc - 40;
+        yBirdLoc = yBirdLoc - 50;
     }
     else {
         yBirdLoc = yBirdLoc + frameCount;

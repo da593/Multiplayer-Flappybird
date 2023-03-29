@@ -2,23 +2,38 @@ import React, {useState,useEffect,useRef} from "react";
 import { BoardGame } from "../GameBoard";
 import { GAME_WIDTH, PIPE_WIDTH, GAP_HEIGHT, GAME_HEIGHT, BIRD_X_LOCATION, BIRD_WIDTH } from "./constants";
 import {calculateBirdCoords, calculateGapCoords, calculateNewBirdCoords, calculateNewGapCoords, detectCollision, randomizeYGapLocation} from "./helper"
-import { Coordinates,BoxCoordinates } from "./types";
+import { BoxCoordinates } from "./types";
 
 export function GameState() {
-    const [gapCoords,setGapCoords] = useState<BoxCoordinates>(calculateGapCoords(GAME_WIDTH,randomizeYGapLocation()));
-    const [birdCoords,setBirdCoords] = useState<BoxCoordinates>(calculateBirdCoords(GAP_HEIGHT / 3));
-    const [hasCollided,setHasCollided] = useState(false);
-    const [hasKeyClicked,setHasKeyClicked] = useState(false);
-
+    const INITIAL_VALUES = {
+        gapCoords: calculateGapCoords(GAME_WIDTH,randomizeYGapLocation()),
+        birdCoords: calculateBirdCoords(GAP_HEIGHT / 3),
+        hasCollided: false,
+        hasKeyClicked: false,
+        score: 0,
+    }
+    const [gapCoords,setGapCoords] = useState<BoxCoordinates>(INITIAL_VALUES.gapCoords);
+    const [birdCoords,setBirdCoords] = useState<BoxCoordinates>(INITIAL_VALUES.birdCoords);
+    const [hasCollided,setHasCollided] = useState(INITIAL_VALUES.hasCollided);
+    const [hasKeyClicked,setHasKeyClicked] = useState(INITIAL_VALUES.hasKeyClicked);
     const [score,setScore] = useState(0);
-    const handleClick = (e:KeyboardEvent) => {
+
+    const handleKeyBoardEvent = (e:KeyboardEvent) => {
         if (e.key === "w") {
             setHasKeyClicked(true);
         }
     }  
 
+    const handleReset = () => {
+        setGapCoords(INITIAL_VALUES.gapCoords);
+        setBirdCoords(INITIAL_VALUES.birdCoords);
+        setHasCollided(INITIAL_VALUES.hasCollided);
+        setHasKeyClicked(INITIAL_VALUES.hasKeyClicked);
+        setScore(INITIAL_VALUES.score);
+    }
+
     useEffect(() => {
-        window.addEventListener("keydown",handleClick)
+        window.addEventListener("keydown",handleKeyBoardEvent)
         let raf:number;
         let frameCount = 0;
         const render = () => {
@@ -48,7 +63,7 @@ export function GameState() {
 
 
     return (
-        <BoardGame width={GAME_WIDTH} height={GAME_HEIGHT} gapCoords={gapCoords} birdCoords={birdCoords} score={score} hasCollided={hasCollided}/>
+        <BoardGame width={GAME_WIDTH} height={GAME_HEIGHT} gapCoords={gapCoords} birdCoords={birdCoords} score={score} hasCollided={hasCollided} handleReset={handleReset}/>
     )
 }
 

@@ -6,15 +6,15 @@ import {GAME_WIDTH,GAME_HEIGHT} from "GameState/constants";
 import { NavigationMenu } from "NavigationMenu";
 
 export function MainPage() {
-    const navItems = ["1-player","2-players"];
-        
 
+        
     return (
         <div className="body-container">
             <div className="canvas-container">
                 <div className="navigation-menu">
                     <ul>
-                        <NavigationMenu items={navItems}/>
+                        <li><Link to="/gamepage">1-player</Link></li>
+                        <li><Link to="/gamepage">2-players</Link></li>
                     </ul>
                 </div>
                 <BoardBackground width={GAME_WIDTH} height={GAME_HEIGHT}/>
