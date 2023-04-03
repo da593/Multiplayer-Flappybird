@@ -49,9 +49,7 @@ button {
   z-index: 1;
   position: absolute;
 }
-.navigation-menu {
-  align-items: center;
-}
+
 .navigation-menu {
   display: flex;
   align-self: center;

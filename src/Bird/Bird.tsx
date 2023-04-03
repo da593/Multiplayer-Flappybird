@@ -1,8 +1,9 @@
 import React,{useEffect, useRef} from 'react';
-import * as consts from "GameState/constants";
-import { BirdCoordProps, GameSizeProps } from 'GameState/types';
+import { BirdCoordProps} from 'GameState/types';
+import { GAME_DIMENSIONS } from 'GameState/constants';
 
-type BirdProps = BirdCoordProps & GameSizeProps;
+
+type BirdProps = BirdCoordProps;
 export function Bird(props:BirdProps) {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -10,7 +11,7 @@ export function Bird(props:BirdProps) {
     const draw = (context:CanvasRenderingContext2D) => {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height)
         context.fillStyle = "red";
-        context.fillRect(50, props.birdCoords.topLeft.y, consts.BIRD_WIDTH, consts.BIRD_WIDTH);
+        context.fillRect(50, props.birdCoords.topLeft.y, GAME_DIMENSIONS.BIRD_WIDTH, GAME_DIMENSIONS.BIRD_WIDTH);
 
     }
 
@@ -25,6 +26,6 @@ export function Bird(props:BirdProps) {
     },[props])
 
     return (
-        <canvas className="canvas-item" width={props.width} height={props.height} ref={canvasRef}/>
+        <canvas className="canvas-item" width={GAME_DIMENSIONS.GAME_WIDTH} height={GAME_DIMENSIONS.GAME_HEIGHT} ref={canvasRef}/>
     )
 }

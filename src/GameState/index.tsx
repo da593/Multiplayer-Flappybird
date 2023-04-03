@@ -1,22 +1,19 @@
-import React, {useState,useEffect,useRef} from "react";
+import React, {useState,useEffect} from "react";
 import { BoardGame } from "../GameBoard";
-import { GAME_WIDTH, PIPE_WIDTH, GAP_HEIGHT, GAME_HEIGHT, BIRD_X_LOCATION, BIRD_WIDTH } from "./constants";
-import {calculateBirdCoords, calculateGapCoords, calculateNewBirdCoords, calculateNewGapCoords, detectCollision, randomizeYGapLocation} from "./helper"
+import {calculateNewBirdCoords, calculateNewGapCoords, detectCollision} from "./helper"
 import { BoxCoordinates } from "./types";
+import { INITAL_STATE } from "./constants";
+
 
 export function GameState() {
-    const INITIAL_VALUES = {
-        gapCoords: calculateGapCoords(GAME_WIDTH,randomizeYGapLocation()),
-        birdCoords: calculateBirdCoords(GAP_HEIGHT / 3),
-        hasCollided: false,
-        hasKeyClicked: false,
-        score: 0,
-    }
-    const [gapCoords,setGapCoords] = useState<BoxCoordinates>(INITIAL_VALUES.gapCoords);
-    const [birdCoords,setBirdCoords] = useState<BoxCoordinates>(INITIAL_VALUES.birdCoords);
-    const [hasCollided,setHasCollided] = useState(INITIAL_VALUES.hasCollided);
-    const [hasKeyClicked,setHasKeyClicked] = useState(INITIAL_VALUES.hasKeyClicked);
-    const [score,setScore] = useState(0);
+    
+
+    const [hasCollided,setHasCollided] = useState(INITAL_STATE.hasCollided);
+    const [gapCoords,setGapCoords] = useState<BoxCoordinates>(INITAL_STATE.gapCoords);
+    const [birdCoords,setBirdCoords] = useState<BoxCoordinates>(INITAL_STATE.birdCoords);
+    const [hasKeyClicked,setHasKeyClicked] = useState(INITAL_STATE.hasKeyClicked);
+    const [score,setScore] = useState(INITAL_STATE.score);
+    
 
     const handleKeyBoardEvent = (e:KeyboardEvent) => {
         if (e.key === "w") {
@@ -25,22 +22,21 @@ export function GameState() {
     }  
 
     const handleReset = () => {
-        setGapCoords(INITIAL_VALUES.gapCoords);
-        setBirdCoords(INITIAL_VALUES.birdCoords);
-        setHasCollided(INITIAL_VALUES.hasCollided);
-        setHasKeyClicked(INITIAL_VALUES.hasKeyClicked);
-        setScore(INITIAL_VALUES.score);
+        setGapCoords(INITAL_STATE.gapCoords)
+        setBirdCoords(INITAL_STATE.birdCoords);
+        setHasCollided(INITAL_STATE.hasCollided);
+        setHasKeyClicked(INITAL_STATE.hasKeyClicked);
+        setScore(INITAL_STATE.score);
     }
 
     useEffect(() => {
         window.addEventListener("keydown",handleKeyBoardEvent)
         let raf:number;
-        let frameCount = 0;
+        const frameCount = 1;
         const render = () => {
             if (!hasCollided) {
-                frameCount++
-                setGapCoords(calculateNewGapCoords(gapCoords,frameCount))
-                setBirdCoords(calculateNewBirdCoords(birdCoords,frameCount,hasKeyClicked))
+                setBirdCoords(prevBirdCoords => calculateNewBirdCoords(prevBirdCoords,frameCount,hasKeyClicked))
+                setGapCoords(prevGapCoords => calculateNewGapCoords(prevGapCoords,frameCount));
                 setHasKeyClicked(false);
                 raf = window.requestAnimationFrame(render);
             }
@@ -56,14 +52,14 @@ export function GameState() {
         if (detectCollision(birdCoords,gapCoords)) {
             setHasCollided(true);
         }
-        else if (birdCoords.topLeft.x === gapCoords.topRight.x + 1) {
+        else if (birdCoords.topLeft.x === gapCoords.topRight.x + 1 && !hasCollided) {
             setScore(score + 1)
         }
     },[gapCoords,birdCoords])
 
 
     return (
-        <BoardGame width={GAME_WIDTH} height={GAME_HEIGHT} gapCoords={gapCoords} birdCoords={birdCoords} score={score} hasCollided={hasCollided} handleReset={handleReset}/>
+        <BoardGame gapCoords={gapCoords} birdCoords={birdCoords} score={score} hasCollided={hasCollided} handleReset={handleReset}/>
     )
 }
 

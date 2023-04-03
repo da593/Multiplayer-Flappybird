@@ -1,3 +1,4 @@
-export interface NavMenuItems {
-    handleReset: () => void,
+export interface ChildrenProps {
+    children:React.ReactNode,
+    
 }

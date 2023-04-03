@@ -1,8 +1,8 @@
 import React,{useEffect, useRef} from 'react';
-import * as consts from "GameState/constants";
-import { GameSizeProps, GapCoordProps } from 'GameState/types';
+import { GapCoordProps } from 'GameState/types';
+import { GAME_DIMENSIONS } from 'GameState/constants';
 
-type PipeProps = GapCoordProps & GameSizeProps;
+type PipeProps = GapCoordProps;
 export function Pipe(props: PipeProps) {
   
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -11,11 +11,11 @@ export function Pipe(props: PipeProps) {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 
         context.fillStyle = "green";
-        context.fillRect(props.gapCoords.topLeft.x, 0, consts.PIPE_WIDTH, props.gapCoords.topLeft.y);
-        context.fillRect(props.gapCoords.topLeft.x, props.gapCoords.botLeft.y, consts.PIPE_WIDTH, canvas.height)
+        context.fillRect(props.gapCoords.topLeft.x, 0, GAME_DIMENSIONS.PIPE_WIDTH, props.gapCoords.topLeft.y);
+        context.fillRect(props.gapCoords.topLeft.x, props.gapCoords.botLeft.y, GAME_DIMENSIONS.PIPE_WIDTH, canvas.height)
 
         context.fillStyle= "#87CEEB"; 
-        context.fillRect(props.gapCoords.topLeft.x, props.gapCoords.topLeft.y , consts.PIPE_WIDTH, consts.GAP_HEIGHT);
+        context.fillRect(props.gapCoords.topLeft.x, props.gapCoords.topLeft.y , GAME_DIMENSIONS.PIPE_WIDTH, GAME_DIMENSIONS.GAP_HEIGHT);
         
     }
 
@@ -33,6 +33,6 @@ export function Pipe(props: PipeProps) {
 
 
     return (
-        <canvas className="canvas-item" width={props.width} height={props.height} ref={canvasRef} />
+        <canvas className="canvas-item" width={GAME_DIMENSIONS.GAME_WIDTH} height={GAME_DIMENSIONS.GAME_HEIGHT} ref={canvasRef} />
     )
 }
