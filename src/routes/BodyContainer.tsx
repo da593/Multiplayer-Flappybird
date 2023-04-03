@@ -9,7 +9,7 @@ export function BodyContainer(props:ChildrenProps) {
         <div className="body-container">
             <div className="canvas-container">
                 {props.children}
-            </div
+            </div>
         </div>
     )
 }
