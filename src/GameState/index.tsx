@@ -1,65 +1,102 @@
 import React, {useState,useEffect} from "react";
-import { BoardGame } from "../GameBoard";
-import {calculateNewBirdCoords, calculateNewGapCoords, detectCollision} from "./helper"
-import { BoxCoordinates } from "./types";
-import { INITAL_STATE } from "./constants";
+import { BoardGame } from "../GameBoard/index";
+import {calculateBirdCoords, calculateNewBirdCoords, calculateNewGapCoords, detectCollision} from "./helper"
+import { GameState_I, PlayerCount_I } from "./types";
+import { GAME_DIMENSIONS, INITAL_STATE, KEYBINDS } from "./constants";
+import { NavigationMenu } from 'NavigationMenu';
+import { Link } from 'react-router-dom';
 
-
-export function GameState() {
+export function GameState(props:PlayerCount_I) {
     
+    const [playersState, setPlayerState] = useState<GameState_I[]>(Array(props.players).fill(INITAL_STATE));
+    const [numDeadPlayers, setNumDeadPlayers] = useState<number>(0);
+    const requestRef = React.useRef(1);
 
-    const [hasCollided,setHasCollided] = useState(INITAL_STATE.hasCollided);
-    const [gapCoords,setGapCoords] = useState<BoxCoordinates>(INITAL_STATE.gapCoords);
-    const [birdCoords,setBirdCoords] = useState<BoxCoordinates>(INITAL_STATE.birdCoords);
-    const [hasKeyClicked,setHasKeyClicked] = useState(INITAL_STATE.hasKeyClicked);
-    const [score,setScore] = useState(INITAL_STATE.score);
-    
-
-    const handleKeyBoardEvent = (e:KeyboardEvent) => {
-        if (e.key === "w") {
-            setHasKeyClicked(true);
+    const updateGameState = (newPlayersState:GameState_I[]) => {
+        if (numDeadPlayers !== props.players) {
+            setPlayerState(newPlayersState);
         }
-    }  
+    }
 
+    const animate = () => {
+        const newPlayersState:GameState_I[] = playersState.map((player:GameState_I) => {
+            if (player.hasCollided) {
+                return player;
+            }
+            else if (detectCollision(player.birdCoords, player.gapCoords)) {
+                setNumDeadPlayers(prevNum => prevNum + 1);
+                return {
+                    ...player, 
+                    hasCollided: true}; 
+                
+            }   
+            else if (player.birdCoords.topLeft.x === player.gapCoords.topRight.x + 1) {
+                return {
+                    ...player,
+                    score: player.score + 1,
+                    birdCoords: calculateNewBirdCoords(player.birdCoords),
+                    gapCoords: calculateNewGapCoords(player.gapCoords)
+                }
+            }
+            else {
+                return {
+                    ...player,
+                    birdCoords: calculateNewBirdCoords(player.birdCoords),
+                    gapCoords: calculateNewGapCoords(player.gapCoords)
+                }
+            }
+
+        })
+        updateGameState(newPlayersState);
+    }
+    
+    const handleKeyBoardEvent = (e:KeyboardEvent) => {
+        const newPlayersState:GameState_I[] = playersState.map((player:GameState_I,index: number) => { 
+            if (e.key === KEYBINDS[index] && player.birdCoords.topLeft.y > 0 && !player.hasCollided) {
+                const newBirdCoords = calculateBirdCoords(player.birdCoords.topLeft.y - GAME_DIMENSIONS.Y_FLY_UP);
+                return {
+                    ...player,
+                    birdCoords: newBirdCoords
+                };
+                
+            }
+            else {
+                return player;
+            }
+        })
+        updateGameState(newPlayersState);
+    }  
     const handleReset = () => {
-        setGapCoords(INITAL_STATE.gapCoords)
-        setBirdCoords(INITAL_STATE.birdCoords);
-        setHasCollided(INITAL_STATE.hasCollided);
-        setHasKeyClicked(INITAL_STATE.hasKeyClicked);
-        setScore(INITAL_STATE.score);
+        setPlayerState(Array(props.players).fill(INITAL_STATE));
+        setNumDeadPlayers(0);
     }
 
     useEffect(() => {
-        window.addEventListener("keydown",handleKeyBoardEvent)
-        let raf:number;
-        const frameCount = 1;
-        const render = () => {
-            if (!hasCollided) {
-                setBirdCoords(prevBirdCoords => calculateNewBirdCoords(prevBirdCoords,frameCount,hasKeyClicked))
-                setGapCoords(prevGapCoords => calculateNewGapCoords(prevGapCoords,frameCount));
-                setHasKeyClicked(false);
-                raf = window.requestAnimationFrame(render);
-            }
-        }
-        render();
+        window.addEventListener("keydown", handleKeyBoardEvent);
         return () => {
-            window.cancelAnimationFrame(raf);
-        }
-    },[hasCollided,hasKeyClicked])
-
+            window.removeEventListener("keydown", handleKeyBoardEvent);
+        };
+    },[playersState])
 
     useEffect(() => {
-        if (detectCollision(birdCoords,gapCoords)) {
-            setHasCollided(true);
-        }
-        else if (birdCoords.topLeft.x === gapCoords.topRight.x + 1 && !hasCollided) {
-            setScore(score + 1)
-        }
-    },[gapCoords,birdCoords])
+        requestRef.current = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(requestRef.current);
+    }, [playersState])
 
 
     return (
-        <BoardGame gapCoords={gapCoords} birdCoords={birdCoords} score={score} hasCollided={hasCollided} handleReset={handleReset}/>
+        <>
+        {playersState.map((state,index) => <BoardGame key={index} {...state} />)}
+        {numDeadPlayers === props.players ? <NavigationMenu>
+                {playersState.map((player:GameState_I, index:number) => {
+                    return (
+                        <h1 key={index}>P{index + 1} Score: {player.score}</h1>
+                    )
+                })}
+                <li><button onClick={handleReset}>Play Again</button></li>
+                <li><Link to="/">Main Menu</Link></li>
+            </NavigationMenu> : null}
+        </>
     )
 }
 

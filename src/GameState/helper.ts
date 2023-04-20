@@ -29,7 +29,7 @@ export const calculateBirdCoords = (yBirdLoc: number):BoxCoordinates => {
     return {topLeft:birdTopLeft,topRight: birdTopRight, botLeft: birdBotLeft, botRight: birdBotRight}
 }
 
-export const calculateNewGapCoords = (prevGapCoords: BoxCoordinates, frameCount:number):BoxCoordinates => {
+export const calculateNewGapCoords = (prevGapCoords: BoxCoordinates):BoxCoordinates => {
     let xPipeLoc:number = prevGapCoords.topLeft.x;
     let yGapLoc: number = prevGapCoords.topLeft.y;
     if (xPipeLoc <= -GAME_DIMENSIONS.PIPE_WIDTH) {
@@ -37,20 +37,15 @@ export const calculateNewGapCoords = (prevGapCoords: BoxCoordinates, frameCount:
         xPipeLoc = GAME_DIMENSIONS.GAME_WIDTH;
     }
     else {
-        xPipeLoc = prevGapCoords.topLeft.x - frameCount;
+        xPipeLoc = prevGapCoords.topLeft.x - 1;
     }
     
     return calculateGapCoords(xPipeLoc,yGapLoc);
 }
 
-export const calculateNewBirdCoords = (prevGapCoords: BoxCoordinates, frameCount:number, hasKeyClicked:boolean) => {
+export const calculateNewBirdCoords = (prevGapCoords: BoxCoordinates) => {
     let yBirdLoc = prevGapCoords.topLeft.y;
-    if (hasKeyClicked === true && yBirdLoc > 0) {
-        yBirdLoc = yBirdLoc - GAME_DIMENSIONS.Y_FLY_UP;
-    }
-    else {
-        yBirdLoc = yBirdLoc + frameCount;
-    }
+    yBirdLoc = yBirdLoc + 1;
     return calculateBirdCoords(yBirdLoc);
 }
 

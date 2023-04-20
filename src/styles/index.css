@@ -41,8 +41,11 @@ button {
 }
 
 .canvas-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   display: flex;
   justify-content: center;
+  gap: 20px;
 }
 
 .canvas-item, .navigation-menu, .align-center {
@@ -50,12 +53,14 @@ button {
   position: absolute;
 }
 
+
 .navigation-menu {
   display: flex;
   align-self: center;
 }
 
 .score {
+  z-index: 1;
   color: white;
   font-size: 2.5rem;
 
@@ -63,6 +68,19 @@ button {
 
 #background-layer {
   z-index: -1;
+}
+
+.opaque {
+  opacity: 0.5;
+}
+
+.navigation-menu {
+  background-color: orangered;
+  border: solid black 3px; 
+}
+
+.navigation-menu > ul {
+  margin: 1rem 1rem;
 }
 
 .navigation-menu > ul > li {

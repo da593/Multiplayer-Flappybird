@@ -21,12 +21,15 @@ export interface Dimensions_I {
     Y_FLY_UP: number,
 }
 
-export interface InitalState_I {
+export interface GameState_I {
     gapCoords: BoxCoordinates;
     birdCoords: BoxCoordinates;
-    hasCollided: boolean;
-    hasKeyClicked: boolean;
     score: number;
+    hasCollided: boolean;
+}
+
+export interface PlayerCount_I {
+    players: number,
 }
 
 
@@ -42,9 +45,5 @@ export interface ScoreProps {
     score: number
 }
 
-export interface CollisionProps {
-    hasCollided: boolean;
-    hasReset?:boolean;
-    handleReset?: () => void;
-}
+
 
