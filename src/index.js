@@ -13,20 +13,6 @@ import {ErrorPage} from "routes/ErrorPage";
 import {Navbar} from 'Navbar/Navbar';
 
 
-
-// let router = createBrowserRouter(
-//   createRoutesFromElements(
-//     <Route path="/" element={<Navbar />}>
-//       <Route index element={<MainPage />} />
-//       <Route
-//         path="gamepage"
-//         element={<GamePage />}
-//       />
-//     </Route>
-//   )
-// );
-
-
 let router = createBrowserRouter([
   {
     path: "/",
