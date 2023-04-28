@@ -1,9 +1,7 @@
 import { Coordinates,BoxCoordinates } from "./types";
 import { GAME_DIMENSIONS } from "./constants";
+import { randomizeYGapLocation } from "./randomizeGapFunc";
 
-export const randomizeYGapLocation = ():number => {
-    return Math.floor(Math.random() * (GAME_DIMENSIONS.GAME_HEIGHT - GAME_DIMENSIONS.GAP_HEIGHT));
-}
 
 export const detectCollision = (birdCoords:BoxCoordinates, gapCoords:BoxCoordinates):boolean => {
     return birdCoords.botLeft.y >= GAME_DIMENSIONS.GAME_HEIGHT ||
