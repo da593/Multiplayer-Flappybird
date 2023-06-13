@@ -1,18 +1,20 @@
-import React,{useEffect, useRef} from 'react';
+import React,{useContext, useEffect, useRef} from 'react';
 import { BirdCoordProps} from 'GameState/types';
-import { GAME_DIMENSIONS } from 'GameState/constants';
+import { DimensionContext } from 'hooks/DimensionsContext';
 
 
-type BirdProps = BirdCoordProps;
-export function Bird(props:BirdProps) {
+export function Bird(props:BirdCoordProps) {
 
+    const dimensions = useContext(DimensionContext);
+    
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     const draw = (context:CanvasRenderingContext2D) => {
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height)
-        context.fillStyle = "red";
-        context.fillRect(50, props.birdCoords.topLeft.y, GAME_DIMENSIONS.BIRD_WIDTH, GAME_DIMENSIONS.BIRD_WIDTH);
-
+        if (dimensions) {
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height)
+            context.fillStyle = "red";
+            context.fillRect(50, props.birdCoords.topLeft.y, dimensions.BIRD_WIDTH, dimensions.BIRD_WIDTH);
+        }
     }
 
     useEffect(() => {
@@ -26,6 +28,6 @@ export function Bird(props:BirdProps) {
     },[props])
 
     return (
-        <canvas className="canvas-item" width={GAME_DIMENSIONS.GAME_WIDTH} height={GAME_DIMENSIONS.GAME_HEIGHT} ref={canvasRef}/>
+        <canvas className="canvas-item" width={dimensions ? dimensions.GAME_WIDTH : undefined} height={dimensions ? dimensions.GAME_HEIGHT : undefined} ref={canvasRef}/>
     )
 }

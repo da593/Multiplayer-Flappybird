@@ -1,6 +1,8 @@
-import { calculateBirdCoords, calculateGapCoords } from "./helper";
+import { calculateGapCoords, calculateBirdCoords } from "./helper";
 import { randomizeYGapLocation } from "./randomizeGapFunc";
 import { Dimensions_I, GameState_I } from "./types";
+
+
 
 export const GAME_DIMENSIONS:Dimensions_I = {
     GAME_WIDTH: 540,

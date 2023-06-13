@@ -8,35 +8,43 @@ import {
 import 'styles/index.css';
 import 'styles/nav.css';
 import {MainPage} from 'routes/MainPage';
-import {GamePage} from 'routes/GamePage';
+import {LobbyPage} from 'routes/LobbyPage';
 import {ErrorPage} from "routes/ErrorPage";
 import {Navbar} from 'Navbar/Navbar';
+import {dimensionsLoader} from 'routes/loaders'
+
 
 
 let router = createBrowserRouter([
   {
     path: "/",
     element: <Navbar/>,
-    errorElement: <ErrorPage/>,
+    errorElement: <ErrorPage />,
     children: [
       {
-        path: "/",
-        element: <MainPage />,
+        errorElement: <ErrorPage />,
+        children: [
+          {
+            path: "/",
+            element: <MainPage/>,
+            loader: dimensionsLoader,
+          },
+          {
+            path: "game/:lobbyId",
+            element: <LobbyPage/>,
+            loader: dimensionsLoader,
+          }
+        ]
       },
-      {
-        path: "gamepage",
-        element: <GamePage/>,
-        errorElement: <ErrorPage/>,
-      }
     ]
   }
 ])
 
+
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-      
       <RouterProvider router={router} />
-
   </React.StrictMode>
 );
 

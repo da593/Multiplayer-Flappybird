@@ -1,39 +1,27 @@
+import 'dotenv/config'
 import express, {Request, Response} from 'express';
 import http from 'http';
-import { Server, Socket } from "socket.io";
-import { GAME_DIMENSIONS, INITAL_STATE } from 'GameState/constants';
-import { GameState, GameStateProcessor } from 'GameState';
-import { GameState_I } from 'GameState/types';
+import { GAME_DIMENSIONS } from './GameState/constants';
+import cors from 'cors';
+import {attachSocket} from 'socket';
+
 
 const app = express();
 const httpserver = http.createServer(app);
-const io = new Server(httpserver,{
-  cors: {
-    origin: ["http://localhost:3000","http://localhost:3000/gamepage"],
-    credentials: true,
-  }
-});
-
-const gameProcessor = new GameStateProcessor();
-
-app.get('/', (req: Request, res: Response) => {
-  res.send(GAME_DIMENSIONS);
-});
-
-io.on('connection', (socket:Socket) => {
- 
-  
-  socket.on("keyboard event", (event) => {
-  });
-
-setInterval(() => {
-  io.emit("update clients", )
-},100);
-
-});
-
-
+attachSocket(httpserver);
 
 httpserver.listen(4000, () => {
   console.log('listening on :4000');
 });
+
+app.use(cors());
+const orig = process.env.LOCAL_PORT_REQUEST;
+const corsOptions = {
+  origin: orig,
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+app.get('/api', cors(corsOptions), (req: Request, res: Response) => {
+  res.send(GAME_DIMENSIONS);
+});
+

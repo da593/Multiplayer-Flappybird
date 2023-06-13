@@ -27,3 +27,4 @@ export interface Dimensions_I {
     BIRD_X_LOCATION: number,
     Y_FLY_UP: number,
 }
+

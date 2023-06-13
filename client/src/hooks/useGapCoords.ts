@@ -1,14 +1,13 @@
 import {useEffect, useState} from 'react';
-import {BoxCoordinates} from 'GameState/types'
+import {BoxCoordinates, Dimensions_I} from 'GameState/types'
 import { calculateGapCoords, calculateNewGapCoords } from 'GameState/helper';
-import { GAME_DIMENSIONS } from 'GameState/constants';
 import { randomizeYGapLocation } from 'GameState/randomizeGapFunc';
 
 
 
-export function useGapCoords() {
 
-    const init_value = calculateGapCoords(GAME_DIMENSIONS.GAME_WIDTH, randomizeYGapLocation());
+export function useGapCoords(dimensions:Dimensions_I) {
+    const init_value = calculateGapCoords(dimensions.GAME_WIDTH, randomizeYGapLocation());
     const [gapCoords,setGapCoords] = useState<BoxCoordinates>(init_value);
     useEffect(() => {
         let raf:number;
