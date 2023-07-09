@@ -1,7 +1,7 @@
 export abstract class Entity {
-    #id:String;
+    #id:string;
 
-    constructor(id:String) {
+    constructor(id:string) {
         this.#id = id;
 
     }

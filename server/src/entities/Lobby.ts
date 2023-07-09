@@ -1,41 +1,62 @@
 import { Game } from "GameState/Game";
 import { Entity } from "./Entity";
 import { Player } from "./Player";
-import { IdManager } from "Managers/IdManager";
+import { entityManager } from "Managers/EntityManager";
 import { Pipe } from "./Pipe";
+import { LobbyData } from "@flappyblock/shared";
+
 
 
 export class Lobby extends Entity {
-    players:Map<Player,Pipe>;
+    players: Array<Player>;
     maxPlayers:number;
     game?:Game;
 
-    constructor(id:String, maxPlayers:number) { 
-        super(id)
-        this.maxPlayers = maxPlayers 
-        this.players = new Map()
+    constructor(id:string, maxPlayers:number) { 
+        super(id);
+        this.maxPlayers = maxPlayers;
+        this.players = new Array();
+
     }
     
-
+    
     public initalizeGame() {
-        if (this.players.size < 1) {
+        if (this.players.length < 1) {
             throw("Not enough players");
         }
-        else if (this.players.size > this.maxPlayers) {
+        else if (this.players.length > this.maxPlayers) {
             throw("Too many players in lobby");
         }
         else {
-            this.game = new Game();
+            this.game = new Game(this.players);
         }
     }
 
 
-    public addPlayer(player:Player,pipe:Pipe) {
-       this.players.set(player,pipe);
+    public addPlayer(): string {
+        if (this.players.length >= this.maxPlayers) {
+            throw("Lobby is full");
+        }
+        const pipeId = entityManager.generateId();
+        const newPipe = new Pipe(pipeId);
+        const playerId = entityManager.generateId();
+        const newPlayer = new Player(playerId, newPipe);
+        this.players.push(newPlayer)
+        return playerId;
     }
 
-    public removePlayer(player:Player) {
-        this.players.delete(player);
+    public removePlayer(player:Player):void {
+        const index = this.players.findIndex((elem:Player) => elem.getEntityId() === player.getEntityId());
+        this.players.splice(index,1);
+    }
+
+    public getLobbyData(): LobbyData {
+
+        const data: LobbyData = {
+            lobbyId: this.getEntityId(),
+            maxPlayers: this.maxPlayers,          
+        }
+        return data;
     }
     
 }

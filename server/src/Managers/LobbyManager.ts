@@ -1,62 +1,34 @@
 import { Lobby } from "entities/Lobby";
-import { IdManager, idManager } from "./IdManager";
-import { Player } from "entities/Player";
-import { Pipe } from "entities/Pipe";
-
+import { EntityManager, entityManager } from "./EntityManager";
 
 
 class LobbyManager {
     #lobbies: Map<String,Lobby>;
-    idManager: IdManager;
-    constructor(IdManager:IdManager) {
+    entityManager: EntityManager;
+    constructor(entityManager: EntityManager) {
         this.#lobbies = new Map();
-        this.idManager = IdManager;
+        this.entityManager = entityManager;
     }
 
 
-    public createLobby(maxPlayer:number) {
-        const lobbyId = this.idManager.generateId();
-        const newLobby = new Lobby(lobbyId,maxPlayer);
+    public createLobby(maxPlayer:number):Lobby {
+        const lobbyId = this.entityManager.generateId();
+        const newLobby = new Lobby(lobbyId, maxPlayer);
         this.#lobbies.set(lobbyId, newLobby);
-        this.addPlayer(newLobby);
+        return newLobby;
     }
 
-    public joinLobby(lobbyId:String,playerId:String) {
-        if (this.#lobbies.has(lobbyId)) {
-            const lobby = this.#lobbies.get(lobbyId);
-            if (lobby) {
-                this.addPlayer(lobby);
-            }
-        }
-    }
-
-    public removeLobby(id:String) {
+    public removeLobby(id:string) {
         this.#lobbies.delete(id);
 
     }
 
-    public getLobby(id:String):Lobby | undefined {
-        return this.#lobbies.get(id);
+    public getLobby(id:string): Lobby {
+        const lobby = this.#lobbies.get(id);
+        return lobby!;
     }
 
-    private createPlayer():Player {
-        const playerId = this.idManager.generateId();
-        const player = new Player(playerId);
-        return player;
-    }
-
-    private createPipe():Pipe {
-        const pipeId = this.idManager.generateId();
-        const pipe = new Pipe(pipeId);
-        return pipe;
-    }
-
-    private addPlayer(lobby:Lobby):void {
-        const player = this.createPlayer();
-        const pipe = this.createPipe();
-        lobby.addPlayer(player,pipe);
-    }
-    
+ 
 }
 
-export const lobbyManager = new LobbyManager(idManager);
+export const lobbyManager = new LobbyManager(entityManager);

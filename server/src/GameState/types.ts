@@ -10,10 +10,13 @@ export interface BoxCoordinates {
     botRight: Coordinates;
 }
 
-export interface GameState_I {
-    gapCoords: BoxCoordinates;
+export interface PlayerState_I {
     birdCoords: BoxCoordinates;
     score: number;
+}
+
+export interface PipeState_I {
+    gapCoords: BoxCoordinates;
     hasCollided: boolean;
 }
 
