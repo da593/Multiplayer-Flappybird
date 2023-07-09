@@ -1,0 +1,27 @@
+{
+  "name": "flappyblock",
+  "version": "1.0.0",
+  "description": "Online multiplayer of Flappybird, block version",
+  "private": true,
+  "workspaces": [
+    "shared"
+  ],
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install-all": "(cd shared && npm install) && (cd client && npm install) && (cd server && npm install) && npm install",
+    "start": "(cd client && npm start) & (cd server && npm start)",
+    "build": "(cd server && npm run build) & (cd client && npm run build)",
+    "build-all": "export NODE_ENV=production && (cd shared && npm run build-prod) && (cd server && npm run build-prod) && (cd client && npm run build-prod)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/da593/FlappyBlock.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/da593/FlappyBlock/issues"
+  },
+  "homepage": "https://github.com/da593/FlappyBlock#readme"
+}
