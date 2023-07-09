@@ -3,19 +3,22 @@ import { BoardBackground } from './background';
 import { Scoreboard } from 'GameBoard/Scoreboard';
 import { Pipe } from './Pipe';
 import { Bird } from './Bird';
-import { Dimensions_I, GameState_I } from 'GameState/types';
 import { DimensionContext } from 'hooks/DimensionsContext';
 import { useLoaderData } from 'react-router-dom';
+import { Dimensions_I, GameState } from '@flappyblock/shared';
 
+interface Props extends GameState {
+    hasStarted: boolean;
+}
 
-export function BoardGame(props:GameState_I)  {
-    const dimensions = useLoaderData() as Dimensions_I;    
+export function BoardGame({player, pipe, hasStarted}: Props)  {
+    const dimensions = useLoaderData() as Dimensions_I;
     return (
-        <div className={props.hasCollided ? "gameboard opaque" : "gameboard"}>
+        <div className={pipe.hasCollided || !hasStarted ? "gameboard opaque" : "gameboard"}>
             <DimensionContext.Provider value={dimensions}>
-                <Scoreboard score={props.score}/>
-                <Pipe gapCoords={props.gapCoords}/>
-                <Bird  birdCoords={props.birdCoords}/>
+                <Scoreboard score={player.score}/>
+                <Pipe gapCoords={pipe.gapCoords}/>
+                <Bird  birdCoords={player.birdCoords}/>
                 <BoardBackground/> 
             </DimensionContext.Provider>
         </div>

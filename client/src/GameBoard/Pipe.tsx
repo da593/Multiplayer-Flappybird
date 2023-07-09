@@ -1,9 +1,11 @@
 import React,{useContext, useEffect, useRef} from 'react';
-import { GapCoordProps } from 'GameState/types';
 import { DimensionContext } from 'hooks/DimensionsContext';
+import { BoxCoordinates } from '@flappyblock/shared';
 
-
-export function Pipe(props: GapCoordProps) {
+interface Props {
+    gapCoords: BoxCoordinates
+}
+export function Pipe({gapCoords}: Props) {
   
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const dimensions = useContext(DimensionContext);
@@ -12,11 +14,11 @@ export function Pipe(props: GapCoordProps) {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height)
         if (dimensions) {
             context.fillStyle = "green";
-            context.fillRect(props.gapCoords.topLeft.x, 0, dimensions.PIPE_WIDTH, props.gapCoords.topLeft.y);
-            context.fillRect(props.gapCoords.topLeft.x, props.gapCoords.botLeft.y, dimensions.PIPE_WIDTH, canvas.height)
+            context.fillRect(gapCoords.topLeft.x, 0, dimensions.PIPE_WIDTH, gapCoords.topLeft.y);
+            context.fillRect(gapCoords.topLeft.x, gapCoords.botLeft.y, dimensions.PIPE_WIDTH, canvas.height)
     
             context.fillStyle= "#87CEEB"; 
-            context.fillRect(props.gapCoords.topLeft.x, props.gapCoords.topLeft.y , dimensions.PIPE_WIDTH, dimensions.GAP_HEIGHT);
+            context.fillRect(gapCoords.topLeft.x, gapCoords.topLeft.y , dimensions.PIPE_WIDTH, dimensions.GAP_HEIGHT);
         }
     }
 
@@ -30,7 +32,7 @@ export function Pipe(props: GapCoordProps) {
                 draw(canvas,context);
             }
         }
-    },[props])
+    },[gapCoords])
 
 
     return (

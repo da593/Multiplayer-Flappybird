@@ -9,7 +9,7 @@ export function ErrorPage() {
   console.error(error);
 
   return (
-    <div id="error-page">
+    <div style={{justifyContent: "center", margin: "auto", textAlign: "center"}}>
       <h1>Oops!</h1>
       <p>Sorry, an unexpected error has occurred.</p>
       <p>

@@ -1,9 +1,12 @@
 import React,{useContext, useEffect, useRef} from 'react';
-import { BirdCoordProps} from 'GameState/types';
 import { DimensionContext } from 'hooks/DimensionsContext';
+import { BoxCoordinates } from '@flappyblock/shared';
 
+interface Props {
+    birdCoords: BoxCoordinates
+}
 
-export function Bird(props:BirdCoordProps) {
+export function Bird({birdCoords}:Props) {
 
     const dimensions = useContext(DimensionContext);
     
@@ -13,7 +16,7 @@ export function Bird(props:BirdCoordProps) {
         if (dimensions) {
             context.clearRect(0, 0, context.canvas.width, context.canvas.height)
             context.fillStyle = "red";
-            context.fillRect(50, props.birdCoords.topLeft.y, dimensions.BIRD_WIDTH, dimensions.BIRD_WIDTH);
+            context.fillRect(50, birdCoords.topLeft.y, dimensions.BIRD_WIDTH, dimensions.BIRD_WIDTH);
         }
     }
 
@@ -25,7 +28,7 @@ export function Bird(props:BirdCoordProps) {
                 draw(context);
             }
         }
-    },[props])
+    },[birdCoords])
 
     return (
         <canvas className="canvas-item" width={dimensions ? dimensions.GAME_WIDTH : undefined} height={dimensions ? dimensions.GAME_HEIGHT : undefined} ref={canvasRef}/>

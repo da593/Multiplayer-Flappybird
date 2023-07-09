@@ -1,10 +1,14 @@
-import { getData } from "ConnectionManager/Socket";
-import { Dimensions_I } from "GameState/types";
 
-export async function dimensionsLoader():Promise<Dimensions_I> {
+import { Dimensions_I } from "@flappyblock/shared";
+import { getData } from "api/axios";
+
+
+
+export async function dimensionsLoader(): Promise<Dimensions_I> {
     const endpoint = "api";
-    const data = await getData(endpoint);
-    return  data.data ;
+    const promise = await getData(endpoint);
+    const data = promise.data;
+    return data;
 }
 
 

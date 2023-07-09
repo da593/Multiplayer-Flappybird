@@ -1,17 +1,20 @@
 import React from 'react';
-import { GameState } from 'GameState';
+import { GameManager } from 'GameManager';
 import { BodyContainer } from './BodyContainer';
-import { useLoaderData, useLocation } from 'react-router-dom';
-import { DimensionContext } from 'hooks/DimensionsContext';
-import { Dimensions_I } from 'GameState/types';
+import { useLocation } from 'react-router-dom';
+import { ClientSocket } from '@flappyblock/shared';
 
-export function LobbyPage() {
-    const { state } = useLocation();
 
-    
+export function LobbyPage({socket}: {socket: ClientSocket}) {
+    const location = useLocation();
+    console.log(location);
     return (
         <BodyContainer>
-                <GameState players={state.players}/>
+                <GameManager
+                    playerId={location.state.playerId}
+                    maxPlayers={location.state.maxPlayers} 
+                    socket={socket} 
+                />
         </BodyContainer>
     )
 }

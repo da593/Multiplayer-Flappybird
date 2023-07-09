@@ -1,36 +1,57 @@
-import React, { useEffect } from 'react';
-import { Link, useLoaderData } from "react-router-dom";
+import React, { useState } from 'react';
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { BoardBackground } from "GameBoard/background";
 import { NavigationMenu } from "NavigationMenu";
 import { BodyContainer } from "./BodyContainer";
 import { Pipe } from "GameBoard/Pipe";
 import { Bird } from "GameBoard/Bird";
-import { INITAL_STATE } from 'GameState/constants';
-import { Dimensions_I } from 'GameState/types';
 import { DimensionContext } from 'hooks/DimensionsContext';
 import { useGapCoords } from "hooks/useGapCoords";
-import { socket } from 'ConnectionManager/Socket';
+import { ClientSocket, Dimensions_I, Events, INITAL_STATE } from '@flappyblock/shared';
 
-
-export function MainPage() {
+export function MainPage({socket}: {socket: ClientSocket}) {
     const dimensions = useLoaderData() as Dimensions_I;
-    const gapCoords = useGapCoords(dimensions);
+    const navigate = useNavigate();
 
-    const createLobby = () => {
-        socket.connect();
-        
+    const gapCoords = useGapCoords(dimensions);
+    const [isOpened,setIsOpened] = useState(false);
+    const [lobbyText,setLobbyText] = useState("");
+
+  
+
+    const createLobby = async (maxPlayers: number) => {
+
+        try {
+            const response = await socket.emitWithAck(Events.CreateLobby, {maxPlayers: maxPlayers});
+            const endpoint: string = "lobby/" + response.lobbyId;
+            navigate(endpoint, {state: {...response}});
+        } 
+        catch (e) {
+            console.log(e);
+        }
     }
+
+    const joinLobbyQuery = () => {
+        setIsOpened(true);
+    }
+
+
     return (
         <BodyContainer>
                 <DimensionContext.Provider value={dimensions}>
                     <Pipe gapCoords={gapCoords}/>
-                    <Bird birdCoords={INITAL_STATE.birdCoords}/>
+                    <Bird birdCoords={INITAL_STATE.player.birdCoords}/>
                     <BoardBackground/>
                 </DimensionContext.Provider>
             <NavigationMenu>
-                <li><Link to="/game/:lobbyId" state={{players:1}}> Singleplayer </Link></li>
-                <li><Link onClick={createLobby} to="/game/:lobbyId" state={{players:2}}> Create Lobby </Link></li>
-                <li><Link to="/game/:lobbyId" state={{players:2}}> Join Lobby </Link></li>
+                <li> <button onClick={() => createLobby(1)}> Singleplayer </button> </li>
+                <li> <button onClick={() => createLobby(2)}> Create Lobby </button> </li>
+                <li> <button onClick={joinLobbyQuery}> Join Lobby </button> </li>
+                <div style={isOpened ? {display: "block"} : {display: "none"}}>
+                    <label>Enter Lobby Id</label>
+                    <input onChange={(e) => setLobbyText(e.target.value)}/>
+                    <button>Submit</button>
+                </div>
             </NavigationMenu>
         </BodyContainer>
     )

@@ -1,12 +1,9 @@
+import { BoxCoordinates, Dimensions_I } from '@flappyblock/shared';
+import { calculateGapCoords, calculateNewGapCoords, randomizeYGapLocation } from '@flappyblock/shared/';
 import {useEffect, useState} from 'react';
-import {BoxCoordinates, Dimensions_I} from 'GameState/types'
-import { calculateGapCoords, calculateNewGapCoords } from 'GameState/helper';
-import { randomizeYGapLocation } from 'GameState/randomizeGapFunc';
 
 
-
-
-export function useGapCoords(dimensions:Dimensions_I) {
+export function useGapCoords(dimensions: Dimensions_I) {
     const init_value = calculateGapCoords(dimensions.GAME_WIDTH, randomizeYGapLocation());
     const [gapCoords,setGapCoords] = useState<BoxCoordinates>(init_value);
     useEffect(() => {

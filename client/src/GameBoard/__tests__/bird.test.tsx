@@ -1,8 +1,8 @@
 import React  from 'react';
 import { Bird } from 'GameBoard/Bird';
 import renderer from 'react-test-renderer';
-import { BoxCoordinates } from 'GameState/types';
-import { GAME_DIMENSIONS } from 'GameState/constants';
+import { BoxCoordinates } from 'GameManager/types';
+import { GAME_DIMENSIONS } from 'GameManager/constants';
 
 const birdAtCeiling:BoxCoordinates = {
     topLeft:{x: GAME_DIMENSIONS.BIRD_X_LOCATION, y: 0}, 

@@ -1,11 +1,13 @@
 
-import { ScoreProps } from 'GameState/types';
 import React from 'react';
 
-type ScoreboardProps = ScoreProps
-export function Scoreboard(props:ScoreboardProps) {
+interface Props {
+    score: number;
+}
+
+export function Scoreboard({score}:Props) {
 
     return (
-        <p className="score">{props.score}</p>
+        <p className="score">{score}</p>
     )
 }
