@@ -12,13 +12,19 @@ interface Props {
 
 export function GameManager({playerId_self, players, socket}:Props) {
     const numPlayers = players.length;
-    const INIT_STATE: Array<GameState> = players.map((playerId:string) => (
-        {
+    const INIT_STATE: Array<GameState> = [];
+    players.forEach((playerId: string) => {
+        const stateObj = {
             pipe: {...INITIAL_STATE.pipe}, 
             player: {...INITIAL_STATE.player, playerId: playerId}
         }
-        ));
-    console.log(INIT_STATE);
+        if (playerId === playerId_self) {
+            INIT_STATE.unshift(stateObj);
+        }
+        else {
+            INIT_STATE.push(stateObj);
+        }
+    })
     const [numDeadPlayers, setNumDeadPlayers] = useState<number>(0);
     const [states, setStates] = useState<Array<GameState>>(INIT_STATE);
     const [startGame, setStartGame] = useState<boolean>(false);
@@ -102,7 +108,6 @@ export function GameManager({playerId_self, players, socket}:Props) {
 
     const handleStartGame = async () => {
         setStartGame(true);
-        const response = await socket.emitWithAck(Events.StartGame);
 
     }
 
@@ -121,9 +126,9 @@ export function GameManager({playerId_self, players, socket}:Props) {
 
     return (
         <>
-        {states.map((state) =>
+        {states.map((state, index) =>
             <BoardGame
-                key={playerId_self}
+                key={index}
                 playerId_self={playerId_self}
                 player={state.player}
                 pipe={state.pipe}
@@ -133,9 +138,9 @@ export function GameManager({playerId_self, players, socket}:Props) {
         {numDeadPlayers === numPlayers ? 
             <NavigationMenu>
                 {returnWinner()}
-                {states.map((state:GameState) => {
+                {states.map((state:GameState, index) => {
                     return (
-                        <h1 key={playerId_self}>{state.player.playerId === playerId_self ? "Your" : "Opponent"} Score: {state.player.score}</h1>
+                        <h1 key={index}>{state.player.playerId === playerId_self ? "Your" : "Opponent"} Score: {state.player.score}</h1>
                     )
                 })}
                 <li><button onClick={handleReset}>Play Again</button></li>
