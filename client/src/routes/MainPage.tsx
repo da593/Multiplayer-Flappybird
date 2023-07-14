@@ -54,7 +54,7 @@ export function MainPage({socket}: {socket: ClientSocket}) {
         <BodyContainer>
                 <DimensionContext.Provider value={dimensions}>
                     <Pipe gapCoords={gapCoords}/>
-                    <Bird birdCoords={INITIAL_STATE.player.birdCoords}/>
+                    <Bird isSelf={true} birdCoords={INITIAL_STATE.player.birdCoords}/>
                     <BoardBackground/>
                 </DimensionContext.Provider>
             <NavigationMenu>
