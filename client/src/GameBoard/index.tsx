@@ -20,7 +20,7 @@ export function BoardGame({playerId_self, player, pipe, hasStarted}: Props)  {
             <DimensionContext.Provider value={dimensions}>
                 <Scoreboard isSelf={isSelf} score={player.score}/>
                 <Pipe gapCoords={pipe.gapCoords}/>
-                <Bird  birdCoords={player.birdCoords}/>
+                <Bird  isSelf={isSelf} birdCoords={player.birdCoords}/>
                 <BoardBackground/> 
             </DimensionContext.Provider>
         </div>
