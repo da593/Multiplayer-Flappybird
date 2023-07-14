@@ -3,10 +3,11 @@ import { DimensionContext } from 'hooks/DimensionsContext';
 import { BoxCoordinates } from '@flappyblock/shared';
 
 interface Props {
-    birdCoords: BoxCoordinates
+    birdCoords: BoxCoordinates;
+    isSelf: boolean;
 }
 
-export function Bird({birdCoords}:Props) {
+export function Bird({isSelf, birdCoords}:Props) {
 
     const dimensions = useContext(DimensionContext);
     
@@ -15,7 +16,7 @@ export function Bird({birdCoords}:Props) {
     const draw = (context:CanvasRenderingContext2D) => {
         if (dimensions) {
             context.clearRect(0, 0, context.canvas.width, context.canvas.height)
-            context.fillStyle = "red";
+            context.fillStyle = isSelf ? "red" : "orange";
             context.fillRect(50, birdCoords.topLeft.y, dimensions.BIRD_WIDTH, dimensions.BIRD_WIDTH);
         }
     }
