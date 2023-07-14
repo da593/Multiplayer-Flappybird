@@ -1,4 +1,4 @@
-import { GameState, INITAL_STATE } from "@flappyblock/shared";
+import { GameState } from "@flappyblock/shared";
 import { Player } from "entities/Player";
 
 export class Game {
@@ -7,7 +7,10 @@ export class Game {
 
  constructor(players: Array<Player>) {
     this.players = players;
-    this.gameState = Array(this.players.length).fill(INITAL_STATE);
+    this.gameState = new Array();
+    this.players.map((player:Player) => {
+      this.gameState.push({player: player.getPlayerState(), pipe: player.getPipeState()})
+    });
  }
 
  getState():Array<GameState> {

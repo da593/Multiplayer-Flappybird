@@ -7,7 +7,7 @@ import { Pipe } from "GameBoard/Pipe";
 import { Bird } from "GameBoard/Bird";
 import { DimensionContext } from 'hooks/DimensionsContext';
 import { useGapCoords } from "hooks/useGapCoords";
-import { ClientSocket, Dimensions_I, Events, INITAL_STATE } from '@flappyblock/shared';
+import { ClientSocket, Dimensions_I, Events, INITIAL_STATE } from '@flappyblock/shared';
 
 export function MainPage({socket}: {socket: ClientSocket}) {
     const dimensions = useLoaderData() as Dimensions_I;
@@ -17,14 +17,28 @@ export function MainPage({socket}: {socket: ClientSocket}) {
     const [isOpened,setIsOpened] = useState(false);
     const [lobbyText,setLobbyText] = useState("");
 
-  
 
     const createLobby = async (maxPlayers: number) => {
-
         try {
             const response = await socket.emitWithAck(Events.CreateLobby, {maxPlayers: maxPlayers});
             const endpoint: string = "lobby/" + response.lobbyId;
             navigate(endpoint, {state: {...response}});
+        } 
+        catch (e) {
+            console.log(e);
+        }
+    }
+
+    const joinLobbyQueryRequest = async () => {
+
+        const lobbyId = lobbyText;
+        try {
+            socket.emit(Events.JoinLobby, {lobbyId: lobbyId});
+            socket.on(Events.JoinLobby, (response) => {
+                const endpoint: string = "lobby/" + response.lobbyId;
+                navigate(endpoint, {state: {...response}});
+            })
+
         } 
         catch (e) {
             console.log(e);
@@ -40,7 +54,7 @@ export function MainPage({socket}: {socket: ClientSocket}) {
         <BodyContainer>
                 <DimensionContext.Provider value={dimensions}>
                     <Pipe gapCoords={gapCoords}/>
-                    <Bird birdCoords={INITAL_STATE.player.birdCoords}/>
+                    <Bird birdCoords={INITIAL_STATE.player.birdCoords}/>
                     <BoardBackground/>
                 </DimensionContext.Provider>
             <NavigationMenu>
@@ -50,7 +64,7 @@ export function MainPage({socket}: {socket: ClientSocket}) {
                 <div style={isOpened ? {display: "block"} : {display: "none"}}>
                     <label>Enter Lobby Id</label>
                     <input onChange={(e) => setLobbyText(e.target.value)}/>
-                    <button>Submit</button>
+                    <button onClick={() => joinLobbyQueryRequest()}>Submit</button>
                 </div>
             </NavigationMenu>
         </BodyContainer>

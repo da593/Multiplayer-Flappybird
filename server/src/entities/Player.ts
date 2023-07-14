@@ -1,6 +1,6 @@
 import { PlayerState_I } from "GameState/types";
 import { Entity } from "./Entity";
-import { INITAL_STATE } from "@flappyblock/shared";
+import { INITIAL_STATE, PipeState_I } from "@flappyblock/shared";
 import { Pipe } from "./Pipe";
 
 
@@ -11,7 +11,7 @@ export class Player extends Entity {
     
     constructor(id:string, pipe: Pipe) {
         super(id);
-        this.state = INITAL_STATE.player;
+        this.state = INITIAL_STATE.player;
         this.pipe = pipe;
     }
 
@@ -19,8 +19,12 @@ export class Player extends Entity {
         return this.state;
     }
     
-    getState(): PlayerState_I {
+    getPlayerState(): PlayerState_I {
         return this.state;
+    }
+
+    getPipeState(): PipeState_I {
+        return this.pipe.getState();
     }
 
 }

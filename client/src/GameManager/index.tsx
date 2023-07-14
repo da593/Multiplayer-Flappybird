@@ -2,34 +2,39 @@ import React, {useState,useEffect} from "react";
 import { BoardGame } from "../GameBoard/index";
 import { NavigationMenu } from 'NavigationMenu';
 import { Link } from 'react-router-dom';
-import { ClientSocket, Events, GAME_DIMENSIONS, GameState, INITAL_STATE, KEYBINDS, LobbyData, calculateBirdCoords, calculateNewBirdCoords, calculateNewGapCoords, detectCollision } from "@flappyblock/shared";
+import { ClientSocket, Events, GAME_DIMENSIONS, GameState, INITIAL_STATE, KEYBINDS, calculateBirdCoords, calculateNewBirdCoords, calculateNewGapCoords, detectCollision } from "@flappyblock/shared";
 
 interface Props {
-    playerId: string;
-    maxPlayers: number;
+    playerId_self: string;
+    players: Array<string>;
     socket: ClientSocket;
 }
 
-export function GameManager({playerId,maxPlayers, socket}:Props) {
-    
-    const [playersState, setPlayerState] = useState<GameState[]>(Array(maxPlayers).fill(INITAL_STATE));
+export function GameManager({playerId_self, players, socket}:Props) {
+    const numPlayers = players.length;
+    const INIT_STATE: Array<GameState> = players.map((playerId:string) => (
+        {
+            pipe: {...INITIAL_STATE.pipe}, 
+            player: {...INITIAL_STATE.player, playerId: playerId}
+        }
+        ));
+    console.log(INIT_STATE);
     const [numDeadPlayers, setNumDeadPlayers] = useState<number>(0);
+    const [states, setStates] = useState<Array<GameState>>(INIT_STATE);
     const [startGame, setStartGame] = useState<boolean>(false);
-
     const requestRef = React.useRef(1);
 
-    const updateGameState = (newPlayersState:GameState[]) => {
-        if (numDeadPlayers !== maxPlayers) {
-            setPlayerState(newPlayersState);
+    const updateGameState = (newPlayersState:Array<GameState>) => {
+        if (numDeadPlayers < numPlayers) {
+            setStates(newPlayersState);
         }
     }
-
     const returnWinner = () => {
         if (numDeadPlayers > 1) {
-            if (playersState[0].player.score === playersState[1].player.score) {
+            if (states[0].player.score === states[1].player.score) {
                 return <h1>Draw!</h1>
             }
-            else if (playersState[0].player.score > playersState[1].player.score) {
+            else if (states[0].player.score > states[1].player.score) {
                 return <h1>Player 1 Wins!</h1>
             }
             else {
@@ -42,7 +47,7 @@ export function GameManager({playerId,maxPlayers, socket}:Props) {
     }
 
     const animate = () => {
-        const newPlayersState:GameState[] = playersState.map((player:GameState) => {
+        const newPlayersState:GameState[] = states.map((player:GameState) => {
             if (player.pipe.hasCollided) {
                 return player;
             }
@@ -74,7 +79,7 @@ export function GameManager({playerId,maxPlayers, socket}:Props) {
     }
     
     const handleKeyBoardEvent = (e:KeyboardEvent): void => {
-        const newPlayersState:GameState[] = playersState.map((player:GameState,index: number) => { 
+        const newPlayersState:GameState[] = states.map((player:GameState,index: number) => { 
             if (e.key === KEYBINDS[index] && player.player.birdCoords.topLeft.y > 0 && !player.pipe.hasCollided) {
                 const newBirdCoords = calculateBirdCoords(player.player.birdCoords.topLeft.y - GAME_DIMENSIONS.Y_FLY_UP);
                 return {
@@ -91,14 +96,14 @@ export function GameManager({playerId,maxPlayers, socket}:Props) {
     }
 
     const handleReset = () => {
-        setPlayerState(Array(maxPlayers).fill(INITAL_STATE));
+        setStates(Array(numPlayers).fill(INIT_STATE));
         setNumDeadPlayers(0);
     }
 
     const handleStartGame = async () => {
         setStartGame(true);
-        
         const response = await socket.emitWithAck(Events.StartGame);
+
     }
 
     useEffect(() => {
@@ -106,7 +111,7 @@ export function GameManager({playerId,maxPlayers, socket}:Props) {
         return () => {
             window.removeEventListener("keydown", handleKeyBoardEvent);
         };
-    },[playersState])
+    },[states])
 
     // useEffect(() => {
     //     requestRef.current = requestAnimationFrame(animate);
@@ -116,20 +121,21 @@ export function GameManager({playerId,maxPlayers, socket}:Props) {
 
     return (
         <>
-        {playersState.map((state,index) => 
-            <BoardGame 
-                key={index}
+        {states.map((state) =>
+            <BoardGame
+                key={playerId_self}
+                playerId_self={playerId_self}
                 player={state.player}
                 pipe={state.pipe}
                 hasStarted={startGame}
             />
         )}
-        {numDeadPlayers === maxPlayers ? 
+        {numDeadPlayers === numPlayers ? 
             <NavigationMenu>
                 {returnWinner()}
-                {playersState.map((player:GameState, index:number) => {
+                {states.map((state:GameState) => {
                     return (
-                        <h1 key={index}>{index + 1} Score: {player.player.score}</h1>
+                        <h1 key={playerId_self}>{state.player.playerId === playerId_self ? "Your" : "Opponent"} Score: {state.player.score}</h1>
                     )
                 })}
                 <li><button onClick={handleReset}>Play Again</button></li>

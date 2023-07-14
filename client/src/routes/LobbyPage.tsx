@@ -7,14 +7,18 @@ import { ClientSocket } from '@flappyblock/shared';
 
 export function LobbyPage({socket}: {socket: ClientSocket}) {
     const location = useLocation();
-    console.log(location);
     return (
+        <>
+        <p style={{color: "white"}}>Socket Id: {socket.id}</p>
+        <p style={{color: "white"}}>Lobby Id: {location.state.lobbyId}</p>
+        <p style={{color: "white"}}>Player Id: {location.state.playerId}</p>
         <BodyContainer>
                 <GameManager
-                    playerId={location.state.playerId}
-                    maxPlayers={location.state.maxPlayers} 
+                    playerId_self={location.state.playerId}
+                    players = {location.state.players}
                     socket={socket} 
                 />
         </BodyContainer>
+        </>
     )
 }

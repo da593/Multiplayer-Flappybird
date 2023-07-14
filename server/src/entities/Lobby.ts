@@ -51,10 +51,10 @@ export class Lobby extends Entity {
     }
 
     public getLobbyData(): LobbyData {
-
+        const players = this.players.map((player: Player) => player.getEntityId());
         const data: LobbyData = {
             lobbyId: this.getEntityId(),
-            maxPlayers: this.maxPlayers,          
+            players: players
         }
         return data;
     }

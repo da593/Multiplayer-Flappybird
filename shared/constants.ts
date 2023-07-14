@@ -13,7 +13,7 @@ export const GAME_DIMENSIONS:Dimensions_I = {
     Y_FLY_UP: 45,
 };
 
-export const INITAL_STATE: GameState =  {
+export const INITIAL_STATE: GameState =  {
     player: {
         birdCoords: calculateBirdCoords(GAME_DIMENSIONS.GAP_HEIGHT / 3 ),
         score: 0,

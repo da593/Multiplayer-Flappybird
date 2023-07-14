@@ -13,10 +13,6 @@ export interface BoxCoordinates {
     botRight: Coordinates;
 }
 
-export interface PlayerId {
-    playerId: string;
-}
-  
 export interface PlayerState_I {
     birdCoords: BoxCoordinates;
     score: number;
@@ -44,27 +40,26 @@ export interface Dimensions_I {
     Y_FLY_UP: number,
 }
 
-export type Ack<ResponsePayload> = (payload: ResponsePayload) => void;
-  
+
 export const Events = {
-    CreatePlayer:'create-player',
     CreateLobby: 'create-lobby',
     StartGame: 'start-game',
     JoinLobby: 'join-lobby',
     Restart: 'restart-game',
     RestartRequested: 'restart-requested',
 } as const;
-    
+
+export type Ack<ResponsePayload> = (payload: ResponsePayload) => void;
   
 export interface ClientToServerEvents {
     [Events.CreateLobby]: (data: CreateLobbyArgs, cb:Ack<CreateLobbyResponse>) => void;
     [Events.StartGame]: (cb:Ack<LobbyData>) => void;
-    [Events.JoinLobby]: (data: JoinLobbyRequest, cb: Ack<JoinLobbyResponse>) => void;
+    [Events.JoinLobby]: (data: JoinLobbyArgs) => void;
     [Events.Restart]: (data: LobbyData) => void;
 }
     
 export interface ServerToClientEvents {
-    [Events.CreatePlayer]: (data: string) => void;
+    [Events.JoinLobby]: (data: JoinLobbyResponse) => void;
     [Events.StartGame]: (data: LobbyData) => void;
     [Events.RestartRequested]: () => void;
 }
@@ -81,7 +76,7 @@ export interface IdFields {
   
 export interface LobbyData {
       lobbyId: string;
-      maxPlayers: number;
+      players: Array<string>
 }
   
   
@@ -93,13 +88,12 @@ export interface CreateLobbyResponse extends LobbyData {
     playerId: string;
 }
   
-export interface JoinLobbyRequest {
+export interface JoinLobbyArgs {
     lobbyId: string;
     playerId?: string;
 }
   
-export interface JoinLobbyResponse {
-      lobbyId: string;
+export interface JoinLobbyResponse extends LobbyData {
       playerId: string;
 }
   
