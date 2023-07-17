@@ -33,12 +33,9 @@ export function MainPage({socket}: {socket: ClientSocket}) {
 
         const lobbyId = lobbyText;
         try {
-            socket.emit(Events.JoinLobby, {lobbyId: lobbyId});
-            socket.on(Events.JoinLobby, (response) => {
-                const endpoint: string = "lobby/" + response.lobbyId;
-                navigate(endpoint, {state: {...response}});
-            })
-
+            const response = await socket.emitWithAck(Events.JoinLobby, {lobbyId: lobbyId});
+            const endpoint: string = "lobby/" + response.lobbyId;
+            navigate(endpoint, {state: {...response}});
         } 
         catch (e) {
             console.log(e);

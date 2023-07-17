@@ -1,4 +1,4 @@
-import { Ack, ClientToServerEvents, CreateLobbyArgs, CreateLobbyResponse, Events, IdFields, JoinLobbyArgs, JoinLobbyResponse, ServerToClientEvents } from '@flappyblock/shared';
+import { Ack, ClientToServerEvents, CreateLobbyArgs, CreateLobbyResponse, Events, IdFields, JoinLobbyArgs, JoinLobbyResponse, ServerToClientEvents, StartGameArgs } from '@flappyblock/shared';
 import { createLobby } from 'handlers/createLobby';
 import { joinLobby } from 'handlers/joinLobby';
 import { Server as HttpServer } from 'http';
@@ -31,13 +31,17 @@ io.on("connection", (socket) => {
             });
     })
 
-    socket.on(Events.JoinLobby, (args: JoinLobbyArgs) => {
-        joinLobby(args).then((data) => {
+    socket.on(Events.JoinLobby, (args: JoinLobbyArgs, cb: Ack<JoinLobbyResponse>) => {
+        joinLobby(args, cb).then((data) => {
             joinRooms(data,socket);
             io.to(data.lobbyId).emit(Events.JoinLobby, data);
             }).catch(e => {
                 console.log(e);
             });
+    })
+
+    socket.on(Events.StartGame, (args: StartGameArgs) => {
+        io.to(args.lobbyId).emit(Events.StartGame);
     })
 
 })

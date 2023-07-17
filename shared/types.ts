@@ -53,15 +53,13 @@ export type Ack<ResponsePayload> = (payload: ResponsePayload) => void;
   
 export interface ClientToServerEvents {
     [Events.CreateLobby]: (data: CreateLobbyArgs, cb:Ack<CreateLobbyResponse>) => void;
-    [Events.StartGame]: (cb:Ack<LobbyData>) => void;
-    [Events.JoinLobby]: (data: JoinLobbyArgs) => void;
-    [Events.Restart]: (data: LobbyData) => void;
+    [Events.StartGame]: (data:StartGameArgs) => void;
+    [Events.JoinLobby]: (data: JoinLobbyArgs, cb:Ack<JoinLobbyResponse>) => void;
 }
     
 export interface ServerToClientEvents {
     [Events.JoinLobby]: (data: JoinLobbyResponse) => void;
-    [Events.StartGame]: (data: LobbyData) => void;
-    [Events.RestartRequested]: () => void;
+    [Events.StartGame]: () => void;
 }
 
 export type ClientSocket = SocketIOClientSocket<ServerToClientEvents,ClientToServerEvents>;
@@ -96,5 +94,9 @@ export interface JoinLobbyArgs {
 export interface JoinLobbyResponse extends LobbyData {
       playerId: string;
 }
-  
+
+
+export interface StartGameArgs {
+    lobbyId: string;
+}
   
