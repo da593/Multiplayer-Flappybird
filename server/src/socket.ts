@@ -19,9 +19,13 @@ const joinRooms = (data: Partial<IdFields>, socket: Socket) => {
     }
 
   };
-//socket.volatile.emit
+
 io.on("connection", (socket) => {
     console.log("New connection: ",socket.id);
+
+    socket.on("disconnect", () => {
+        console.log("Lost connection: ",socket.id);
+    })
 
     socket.on(Events.CreateLobby, (args: CreateLobbyArgs, cb: Ack<CreateLobbyResponse>) => {
         createLobby(args, cb).then((data) => {
@@ -41,7 +45,10 @@ io.on("connection", (socket) => {
     })
 
     socket.on(Events.StartGame, (args: StartGameArgs) => {
+        console.log("start")
         io.to(args.lobbyId).emit(Events.StartGame);
+        io.to(args.lobbyId).emit(Events.UpdateGame, "s");
+        
     })
 
 })

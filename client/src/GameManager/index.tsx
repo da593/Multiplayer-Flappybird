@@ -1,22 +1,25 @@
-import React, {useState,useEffect} from "react";
+import React, {useState,useEffect, useRef, useContext} from "react";
 import { BoardGame } from "../GameBoard/index";
 import { NavigationMenu } from 'NavigationMenu';
 import { Link } from 'react-router-dom';
-import { ClientSocket, Events, GAME_DIMENSIONS, GameState, INITIAL_STATE, KEYBINDS, calculateBirdCoords, calculateNewBirdCoords, calculateNewGapCoords, detectCollision } from "@flappyblock/shared";
+import { Events, GameState, INITIAL_STATE } from "@flappyblock/shared";
+import { SocketContext } from "hooks/socketContext";
 
 interface Props {
     lobbyId: string
     playerId_self: string;
     players: Array<string>;
-    socket: ClientSocket;
 }
 
-export function GameManager({lobbyId, playerId_self, players, socket}:Props) {
+export function GameManager({lobbyId, playerId_self, players}:Props) {
+    const socket = useContext(SocketContext);
     const [numPlayers, setNumPlayers] = useState<number>(players.length);
     const [numDeadPlayers, setNumDeadPlayers] = useState<number>(0);
     const [states, setStates] = useState<Record<string,GameState>>(initStates(players));
     const [startGame, setStartGame] = useState<boolean>(false);
-    const requestRef = React.useRef(1);
+    const requestRef = useRef(1);
+    const renderCounter  = useRef(0);
+    renderCounter.current = renderCounter.current + 1;
     // const updateGameState = (newPlayersState:Array<GameState>) => {
     //     if (numDeadPlayers < numPlayers) {
     //         setStates(newPlayersState);
@@ -102,9 +105,9 @@ export function GameManager({lobbyId, playerId_self, players, socket}:Props) {
     }
 
     const handleStartGame = () => {
-        setStartGame(true);
         socket.emit(Events.StartGame, {lobbyId: lobbyId});
     }
+    
 
     // useEffect(() => {
     //     window.addEventListener("keydown", handleKeyBoardEvent);
@@ -114,18 +117,29 @@ export function GameManager({lobbyId, playerId_self, players, socket}:Props) {
     // },[states])
 
     useEffect(() => {
-        setStates(initStates(players));
+        if (!startGame) {
+            setStates(initStates(players));
+        }
     },[players]);
 
     useEffect(() => {
         socket.on(Events.StartGame, () => {
             setStartGame(true);
+        });
+
+        socket.on(Events.UpdateGame, (data) => {
+            console.log(data);
         })
+        return () => {
+            socket.off(Events.StartGame)
+            socket.off(Events.UpdateGame);
+        }
     }, [])
 
 
     return (
         <>
+        <h1>{renderCounter.current}</h1>
         {Object.entries(states).map(([id, state]) =>
             <BoardGame
                 key={id}

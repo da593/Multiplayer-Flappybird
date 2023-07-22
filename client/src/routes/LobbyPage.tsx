@@ -1,18 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { GameManager } from 'GameManager';
 import { BodyContainer } from './BodyContainer';
 import { useLocation } from 'react-router-dom';
-import { ClientSocket, Events, JoinLobbyResponse } from '@flappyblock/shared';
+import { Events, JoinLobbyResponse } from '@flappyblock/shared';
+import { SocketContext } from 'hooks/socketContext';
 
 
-export function LobbyPage({socket}: {socket: ClientSocket}) {
+export function LobbyPage() {
+    const socket = useContext(SocketContext);
     const location = useLocation();
     const [players, setPlayers] = useState<Array<string>>(location.state.players);
-
+    
     useEffect(() => {
+
+        const onJoinLobby = (players: Array<string>) => {
+            setPlayers(players);
+        }
+
         socket.on(Events.JoinLobby, (data: JoinLobbyResponse) => {
-            setPlayers(data.players);
+            onJoinLobby(data.players)
         })
+
+        return () => {
+            socket.off(Events.JoinLobby);
+        }
     },[])
 
     return (
@@ -24,8 +35,7 @@ export function LobbyPage({socket}: {socket: ClientSocket}) {
                 <GameManager
                     lobbyId={location.state.lobbyId}
                     playerId_self={location.state.playerId}
-                    players = {players}
-                    socket={socket} 
+                    players = {players} 
                 />
         </BodyContainer>
         </>

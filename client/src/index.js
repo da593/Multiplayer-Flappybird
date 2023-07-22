@@ -12,13 +12,9 @@ import { LobbyPage } from 'routes/LobbyPage';
 import {ErrorPage } from "routes/ErrorPage";
 import { Navbar } from 'Navbar/Navbar';
 import { dimensionsLoader } from 'routes/loaders'
-import { io } from 'socket.io-client';
-import { baseUrl } from "api/axios";
+import { SocketContext, socket } from 'hooks/socketContext'
 
-
-const socket = io(baseUrl);
-
-let router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <Navbar/>,
@@ -28,12 +24,12 @@ let router = createBrowserRouter([
         children: [
           {
             path: "/",
-            element: <MainPage socket={socket}/>,
+            element: <MainPage/>,
             loader: dimensionsLoader,
           },
           {
             path: "lobby/:lobbyId",
-            element: <LobbyPage socket={socket}/>,
+            element: <LobbyPage/>,
             loader:  dimensionsLoader,
           }
         ]
@@ -46,7 +42,9 @@ let router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
+    <SocketContext.Provider value={socket}>
       <RouterProvider router={router} />
+    </SocketContext.Provider>
   </React.StrictMode>
 );
 

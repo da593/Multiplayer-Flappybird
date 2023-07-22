@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { BoardBackground } from "GameBoard/background";
 import { NavigationMenu } from "NavigationMenu";
@@ -7,9 +7,11 @@ import { Pipe } from "GameBoard/Pipe";
 import { Bird } from "GameBoard/Bird";
 import { DimensionContext } from 'hooks/DimensionsContext';
 import { useGapCoords } from "hooks/useGapCoords";
-import { ClientSocket, Dimensions_I, Events, INITIAL_STATE } from '@flappyblock/shared';
+import { Dimensions_I, Events, INITIAL_STATE } from '@flappyblock/shared';
+import { SocketContext } from 'hooks/socketContext';
 
-export function MainPage({socket}: {socket: ClientSocket}) {
+export function MainPage() {
+    const socket = useContext(SocketContext);
     const dimensions = useLoaderData() as Dimensions_I;
     const navigate = useNavigate();
 

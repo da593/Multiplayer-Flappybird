@@ -43,8 +43,9 @@ export interface Dimensions_I {
 
 export const Events = {
     CreateLobby: 'create-lobby',
-    StartGame: 'start-game',
     JoinLobby: 'join-lobby',
+    StartGame: 'start-game',
+    UpdateGame: 'update-game',
     Restart: 'restart-game',
     RestartRequested: 'restart-requested',
 } as const;
@@ -55,11 +56,13 @@ export interface ClientToServerEvents {
     [Events.CreateLobby]: (data: CreateLobbyArgs, cb:Ack<CreateLobbyResponse>) => void;
     [Events.StartGame]: (data:StartGameArgs) => void;
     [Events.JoinLobby]: (data: JoinLobbyArgs, cb:Ack<JoinLobbyResponse>) => void;
+    [Events.UpdateGame]: () => void;
 }
     
 export interface ServerToClientEvents {
     [Events.JoinLobby]: (data: JoinLobbyResponse) => void;
     [Events.StartGame]: () => void;
+    [Events.UpdateGame]: (data: string) => void;
 }
 
 export type ClientSocket = SocketIOClientSocket<ServerToClientEvents,ClientToServerEvents>;
