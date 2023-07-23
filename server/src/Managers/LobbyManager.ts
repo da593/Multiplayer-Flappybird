@@ -25,10 +25,11 @@ class LobbyManager {
 
     public getLobby(id:string): Lobby {
         const lobby = this.#lobbies.get(id);
-        return lobby!;
+        if (!lobby) {
+            throw ("Lobby does not exist");
+        }
+        return lobby;
     }
-
- 
 }
 
 export const lobbyManager = new LobbyManager(entityManager);

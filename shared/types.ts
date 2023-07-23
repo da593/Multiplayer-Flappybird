@@ -16,12 +16,12 @@ export interface BoxCoordinates {
 export interface PlayerState_I {
     birdCoords: BoxCoordinates;
     score: number;
+    hasCollided: boolean;
     playerId?: string;
 }
   
 export interface PipeState_I {
     gapCoords: BoxCoordinates;
-    hasCollided: boolean;
 }
 
 export interface GameState {
@@ -56,13 +56,12 @@ export interface ClientToServerEvents {
     [Events.CreateLobby]: (data: CreateLobbyArgs, cb:Ack<CreateLobbyResponse>) => void;
     [Events.StartGame]: (data:StartGameArgs) => void;
     [Events.JoinLobby]: (data: JoinLobbyArgs, cb:Ack<JoinLobbyResponse>) => void;
-    [Events.UpdateGame]: () => void;
 }
     
 export interface ServerToClientEvents {
     [Events.JoinLobby]: (data: JoinLobbyResponse) => void;
     [Events.StartGame]: () => void;
-    [Events.UpdateGame]: (data: string) => void;
+    [Events.UpdateGame]: (data: GameData) => void;
 }
 
 export type ClientSocket = SocketIOClientSocket<ServerToClientEvents,ClientToServerEvents>;
@@ -73,6 +72,11 @@ export type ServerManager = Server<ClientToServerEvents, ServerToClientEvents>;
 export interface IdFields {
     lobbyId: string;
     playerId: string;
+}
+
+export interface GameData {
+    lobbyId: string;
+    state: Record<string, GameState>;
 }
   
 export interface LobbyData {
@@ -101,5 +105,6 @@ export interface JoinLobbyResponse extends LobbyData {
 
 export interface StartGameArgs {
     lobbyId: string;
+    shouldEnd?: boolean;
 }
   

@@ -20,11 +20,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     const requestRef = useRef(1);
     const renderCounter  = useRef(0);
     renderCounter.current = renderCounter.current + 1;
-    // const updateGameState = (newPlayersState:Array<GameState>) => {
-    //     if (numDeadPlayers < numPlayers) {
-    //         setStates(newPlayersState);
-    //     }
-    // }
+
     const returnWinner = () => {
         if (numDeadPlayers > 1) {
             if (states[0].player.score === states[1].player.score) {
@@ -81,23 +77,12 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     //     })
     //     updateGameState(newPlayersState);
     // }
+
+    // useEffect(() => {
+    //     requestRef.current = requestAnimationFrame(animate);
+    //     return () => cancelAnimationFrame(requestRef.current);
+    // }, [])
     
-    // const handleKeyBoardEvent = (e:KeyboardEvent): void => {
-    //     const newPlayersState:GameState[] = states.map((player:GameState,index: number) => { 
-    //         if (e.key === KEYBINDS[index] && player.player.birdCoords.topLeft.y > 0 && !player.pipe.hasCollided) {
-    //             const newBirdCoords = calculateBirdCoords(player.player.birdCoords.topLeft.y - GAME_DIMENSIONS.Y_FLY_UP);
-    //             return {
-    //                 ...player,
-    //                 birdCoords: newBirdCoords
-    //             };
-                
-    //         }
-    //         else {
-    //             return player;
-    //         }
-    //     })
-    //     updateGameState(newPlayersState);
-    // }
 
     const handleReset = () => {
         setStates(initStates(players));
@@ -109,12 +94,17 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     }
     
 
-    // useEffect(() => {
-    //     window.addEventListener("keydown", handleKeyBoardEvent);
-    //     return () => {
-    //         window.removeEventListener("keydown", handleKeyBoardEvent);
-    //     };
-    // },[states])
+    useEffect(() => {
+
+        const handleKeyBoardEvent = (e:KeyboardEvent): void => {
+            console.log("key event")
+        }
+
+        window.addEventListener("keydown", handleKeyBoardEvent);
+        return () => {
+            window.removeEventListener("keydown", handleKeyBoardEvent);
+        };
+    },[socket])
 
     useEffect(() => {
         if (!startGame) {
@@ -129,12 +119,13 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
 
         socket.on(Events.UpdateGame, (data) => {
             console.log(data);
+            setStates(data.state);
         })
         return () => {
             socket.off(Events.StartGame)
             socket.off(Events.UpdateGame);
         }
-    }, [])
+    }, [socket]);
 
 
     return (

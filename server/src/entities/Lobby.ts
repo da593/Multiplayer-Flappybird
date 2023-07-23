@@ -20,7 +20,7 @@ export class Lobby extends Entity {
     }
     
     
-    public initalizeGame() {
+    public initalizeGame(): void {
         if (this.players.length < 1) {
             throw("Not enough players");
         }
@@ -57,6 +57,13 @@ export class Lobby extends Entity {
             players: players
         }
         return data;
+    }
+
+    public getGame() {
+        if (!this.game) {
+            throw ("Game has not started");
+        }
+        return this.game;
     }
     
 }

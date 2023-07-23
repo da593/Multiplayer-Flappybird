@@ -17,12 +17,14 @@ export const INITIAL_STATE: GameState =  {
     player: {
         birdCoords: calculateBirdCoords(GAME_DIMENSIONS.GAP_HEIGHT / 3 ),
         score: 0,
+        hasCollided: false,
     },
     pipe: {
         gapCoords: calculateGapCoords(GAME_DIMENSIONS.GAME_WIDTH, randomizeYGapLocation()),
-        hasCollided: false,
     },
 
 }
+
+export const game_tick: number = 50;
 
 export const KEYBINDS:string[] = ["w","ArrowUp"]

@@ -1,7 +1,7 @@
 import { GAME_DIMENSIONS } from "./constants";
 import { BoxCoordinates, Coordinates } from "./types";
 
-export const detectCollision = (birdCoords:BoxCoordinates, gapCoords:BoxCoordinates):boolean => {
+export const detectCollision = (birdCoords:BoxCoordinates, gapCoords:BoxCoordinates): boolean => {
     return birdCoords.botLeft.y >= GAME_DIMENSIONS.GAME_HEIGHT ||
     birdCoords.topRight.x >= gapCoords.topLeft.x && birdCoords.topLeft.x <= gapCoords.topRight.x && (
     birdCoords.topLeft.y <= gapCoords.topLeft.y ||
@@ -9,7 +9,7 @@ export const detectCollision = (birdCoords:BoxCoordinates, gapCoords:BoxCoordina
     
 }   
 
-export const calculateGapCoords = (xPipeLoc: number, yGapLoc: number):BoxCoordinates => {
+export const calculateGapCoords = (xPipeLoc: number, yGapLoc: number): BoxCoordinates => {
     const gapTopLeft:Coordinates = {x:xPipeLoc, y:yGapLoc};
     const gapTopRight:Coordinates = {x:xPipeLoc + GAME_DIMENSIONS.PIPE_WIDTH, y:yGapLoc};
     const gapBotLeft:Coordinates = {x:xPipeLoc, y:yGapLoc + GAME_DIMENSIONS.GAP_HEIGHT};
@@ -17,7 +17,7 @@ export const calculateGapCoords = (xPipeLoc: number, yGapLoc: number):BoxCoordin
     return {topLeft:gapTopLeft,topRight: gapTopRight, botLeft: gapBotLeft, botRight: gapBotRight}
 }
 
-export const calculateBirdCoords = (yBirdLoc: number):BoxCoordinates => {
+export const calculateBirdCoords = (yBirdLoc: number): BoxCoordinates => {
     const birdTopLeft:Coordinates = {x: GAME_DIMENSIONS.BIRD_X_LOCATION, y: yBirdLoc};
     const birdTopRight:Coordinates = {x: GAME_DIMENSIONS.BIRD_X_LOCATION + GAME_DIMENSIONS.BIRD_WIDTH, y: yBirdLoc};
     const birdBotLeft:Coordinates = {x: GAME_DIMENSIONS.BIRD_X_LOCATION, y: yBirdLoc + GAME_DIMENSIONS.BIRD_WIDTH};
@@ -25,7 +25,7 @@ export const calculateBirdCoords = (yBirdLoc: number):BoxCoordinates => {
     return {topLeft:birdTopLeft,topRight: birdTopRight, botLeft: birdBotLeft, botRight: birdBotRight}
 }
 
-export const calculateNewGapCoords = (prevGapCoords: BoxCoordinates):BoxCoordinates => {
+export const calculateNewGapCoords = (prevGapCoords: BoxCoordinates): BoxCoordinates => {
     let xPipeLoc:number = prevGapCoords.topLeft.x;
     let yGapLoc: number = prevGapCoords.topLeft.y;
     if (xPipeLoc <= -GAME_DIMENSIONS.PIPE_WIDTH) {

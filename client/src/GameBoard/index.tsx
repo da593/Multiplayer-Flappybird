@@ -18,7 +18,7 @@ export function BoardGame({id, playerId_self, player, pipe, hasStarted}: Props) 
     const dimensions = useLoaderData() as Dimensions_I;
     const isSelf = playerId_self === id;
     return (
-        <div className={pipe.hasCollided || !hasStarted ? "gameboard opaque" : "gameboard"}>
+        <div className={player.hasCollided || !hasStarted ? "gameboard opaque" : "gameboard"}>
             <DimensionContext.Provider value={dimensions}>
                 <Scoreboard isSelf={isSelf} score={player.score}/>
                 <Pipe gapCoords={pipe.gapCoords}/>

@@ -1,30 +1,44 @@
-import { PlayerState_I } from "GameState/types";
 import { Entity } from "./Entity";
-import { INITIAL_STATE, PipeState_I } from "@flappyblock/shared";
+import { BoxCoordinates, INITIAL_STATE, PipeState_I, PlayerState_I, calculateNewBirdCoords, detectCollision } from "@flappyblock/shared";
 import { Pipe } from "./Pipe";
 
 
 
 export class Player extends Entity {
-    state: PlayerState_I;
+    birdCoords: BoxCoordinates;
+    score: number;
+    hasCollided: boolean;
     pipe: Pipe;
     
     constructor(id:string, pipe: Pipe) {
         super(id);
-        this.state = INITIAL_STATE.player;
+        this.birdCoords = INITIAL_STATE.player.birdCoords;
+        this.score = INITIAL_STATE.player.score;
+        this.hasCollided = INITIAL_STATE.player.hasCollided;
         this.pipe = pipe;
     }
 
-    update(frameTime:number):PlayerState_I {
-        return this.state;
+    update(): void {
+        this.hasCollided = detectCollision(this.birdCoords, this.getPipeState().gapCoords)
+        this.birdCoords = calculateNewBirdCoords(this.birdCoords);
+        this.pipe.update();
     }
     
     getPlayerState(): PlayerState_I {
-        return this.state;
+        return {
+            birdCoords: this.birdCoords,
+            score: this.score,
+            hasCollided: this.hasCollided,
+            playerId: this.getEntityId()
+        };
     }
 
     getPipeState(): PipeState_I {
         return this.pipe.getState();
+    }
+
+    addScore(): void {
+        this.score++;
     }
 
 }

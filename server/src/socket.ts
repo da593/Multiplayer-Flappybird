@@ -1,6 +1,8 @@
-import { Ack, ClientToServerEvents, CreateLobbyArgs, CreateLobbyResponse, Events, IdFields, JoinLobbyArgs, JoinLobbyResponse, ServerToClientEvents, StartGameArgs } from '@flappyblock/shared';
+import { Ack, ClientToServerEvents, CreateLobbyArgs, CreateLobbyResponse, Events, IdFields, JoinLobbyArgs, JoinLobbyResponse, ServerToClientEvents, StartGameArgs, game_tick } from '@flappyblock/shared';
 import { createLobby } from 'handlers/createLobby';
 import { joinLobby } from 'handlers/joinLobby';
+import { startGame } from 'handlers/startGame';
+import { updateGame } from 'handlers/updateGame';
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 
@@ -45,10 +47,19 @@ io.on("connection", (socket) => {
     })
 
     socket.on(Events.StartGame, (args: StartGameArgs) => {
-        console.log("start")
-        io.to(args.lobbyId).emit(Events.StartGame);
-        io.to(args.lobbyId).emit(Events.UpdateGame, "s");
-        
+        const {lobbyId, shouldEnd} = args;
+        io.to(lobbyId).emit(Events.StartGame);
+        startGame(lobbyId);
+        const timerId = setInterval(() => {
+            if (shouldEnd) {
+                clearInterval(timerId)
+            }
+            updateGame(lobbyId).then((data) => {
+                io.to(lobbyId).volatile.emit(Events.UpdateGame, data);
+            }).catch(e => {
+                console.log(e);
+            })
+        }, game_tick)
     })
 
 })
