@@ -27,4 +27,4 @@ export const INITIAL_STATE: GameState =  {
 
 export const game_tick: number = 50;
 
-export const KEYBINDS:string[] = ["w","ArrowUp"]
+export const KEYBINDS: Array<string> = ["w","ArrowUp"]

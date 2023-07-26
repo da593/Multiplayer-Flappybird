@@ -16,6 +16,15 @@ export class Game {
 		this.shouldEnd = true;
 	}
 
+	public removePlayer(playerId: string): void {
+        const index = this.players.findIndex((elem:Player) => elem.getEntityId() === playerId);
+        this.players.splice(index,1);
+	}
+
+	public getNumPlayers(): number {
+		return this.players.length;
+	}
+
 	getState(): Record<string, GameState> {
 		this.players.forEach((player: Player) => {
 			this.state[player.getEntityId()] = {player: player.getPlayerState(), pipe: player.getPipeState() }
@@ -30,8 +39,9 @@ export class Game {
 
 	updateGame(): void {
 		const gameLoopId = setInterval(() => {
-			if (this.shouldEnd) {
+			if (this.shouldEnd || this.getNumPlayers() <= 0) {
 				clearInterval(gameLoopId);
+				console.log("clear update")
 			}
 			this.players.forEach((player: Player) => {
 				player.update();
@@ -41,7 +51,10 @@ export class Game {
 	}
 
 
-
+	playerInput(playerId: string): void {
+		const player = this.players.find((player: Player) => player.getEntityId() === playerId);
+		player?.userInput();
+	}
 
 
 }

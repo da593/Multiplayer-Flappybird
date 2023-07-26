@@ -1,10 +1,13 @@
 import { Ack, ClientToServerEvents, CreateLobbyArgs, CreateLobbyResponse, Events, IdFields, JoinLobbyArgs, JoinLobbyResponse, ServerToClientEvents, StartGameArgs, game_tick } from '@flappyblock/shared';
 import { createLobby } from 'handlers/createLobby';
 import { joinLobby } from 'handlers/joinLobby';
+import { playerInput } from 'handlers/playerInput';
+import { removeSocket } from 'handlers/removeSocket';
 import { startGame } from 'handlers/startGame';
 import { updateGame } from 'handlers/updateGame';
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
+import { clearInterval } from 'timers';
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents>();
 
@@ -21,20 +24,42 @@ const joinRooms = (data: Partial<IdFields>, socket: Socket) => {
     }
 
   };
-
+process.on('warning', e => console.warn(e.stack));
+//run build if socket keeps creating a new connection
 io.on("connection", (socket) => {
     console.log("New connection: ",socket.id);
-
+    let isConnected = true;
     socket.on("disconnect", () => {
-        console.log("Lost connection: ",socket.id);
+        console.log("Lost Connection", socket.id);
+        isConnected = false;
+        removeSocket(socket.id);
     })
+
 
     socket.on(Events.CreateLobby, (args: CreateLobbyArgs, cb: Ack<CreateLobbyResponse>) => {
         createLobby(args, cb).then((data) => {
             joinRooms(data,socket);
-            }).catch(e => {
-                console.log(e);
+        }).catch(e => {
+            console.log(e);
+        });
+
+        let start = Date.now();
+        let latency = 0;
+        io.emit(Events.GetLatency, () => {
+            latency = Date.now() - start;
+            console.log(latency);
+        });
+        const id = setInterval(() => {
+            if (latency > 5000 || !isConnected) { 
+                clearInterval(id);
+                console.log("clear join"); 
+            }
+            start = Date.now();
+            io.emit(Events.GetLatency, () => {
+                latency = Date.now() - start;
+              console.log(latency);
             });
+        }, 25000);   
     })
 
     socket.on(Events.JoinLobby, (args: JoinLobbyArgs, cb: Ack<JoinLobbyResponse>) => {
@@ -44,15 +69,29 @@ io.on("connection", (socket) => {
             }).catch(e => {
                 console.log(e);
             });
+
+        let duration = 0;
+        const id = setInterval(() => {
+            if (duration > 5000 || !isConnected) {
+                clearInterval(id)
+            }
+            const start = Date.now();
+            io.emit(Events.GetLatency, () => {
+                duration = Date.now() - start;
+                console.log(duration);
+            });
+        }, 25000);   
     })
 
     socket.on(Events.StartGame, (args: StartGameArgs) => {
         const {lobbyId, shouldEnd} = args;
         io.to(lobbyId).emit(Events.StartGame);
         startGame(lobbyId);
+        
         const timerId = setInterval(() => {
-            if (shouldEnd) {
-                clearInterval(timerId)
+            if (shouldEnd || !isConnected) {
+                clearInterval(timerId);
+                console.log("clear start");
             }
             updateGame(lobbyId).then((data) => {
                 io.to(lobbyId).volatile.emit(Events.UpdateGame, data);
@@ -60,6 +99,10 @@ io.on("connection", (socket) => {
                 console.log(e);
             })
         }, game_tick)
+    })
+
+    socket.on(Events.PlayerInput, (args: IdFields) => {
+        playerInput(args.lobbyId, args.playerId);
     })
 
 })

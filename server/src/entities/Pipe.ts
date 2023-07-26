@@ -11,7 +11,6 @@ export class Pipe extends Entity {
 
     update(): void {
         this.position = calculateNewGapCoords(this.position);
-        console.log("pipe update");
     }
 
     getState(): PipeState_I {

@@ -2,7 +2,7 @@ import React, {useState,useEffect, useRef, useContext} from "react";
 import { BoardGame } from "../GameBoard/index";
 import { NavigationMenu } from 'NavigationMenu';
 import { Link } from 'react-router-dom';
-import { Events, GameState, INITIAL_STATE } from "@flappyblock/shared";
+import { Events, GameState, INITIAL_STATE, KEYBINDS } from "@flappyblock/shared";
 import { SocketContext } from "hooks/socketContext";
 
 interface Props {
@@ -18,8 +18,6 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     const [states, setStates] = useState<Record<string,GameState>>(initStates(players));
     const [startGame, setStartGame] = useState<boolean>(false);
     const requestRef = useRef(1);
-    const renderCounter  = useRef(0);
-    renderCounter.current = renderCounter.current + 1;
 
     const returnWinner = () => {
         if (numDeadPlayers > 1) {
@@ -97,12 +95,15 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     useEffect(() => {
 
         const handleKeyBoardEvent = (e:KeyboardEvent): void => {
-            console.log("key event")
+            if (KEYBINDS.find((str: string) => str === e.key)) {
+                socket.emit(Events.PlayerInput, {lobbyId: lobbyId, playerId: playerId_self});
+            }
         }
 
         window.addEventListener("keydown", handleKeyBoardEvent);
         return () => {
             window.removeEventListener("keydown", handleKeyBoardEvent);
+
         };
     },[socket])
 
@@ -118,7 +119,6 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
         });
 
         socket.on(Events.UpdateGame, (data) => {
-            console.log(data);
             setStates(data.state);
         })
         return () => {
@@ -127,10 +127,13 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
         }
     }, [socket]);
 
+    useEffect(() => {
+        //console.log(states);
+    }, [states])
+
 
     return (
         <>
-        <h1>{renderCounter.current}</h1>
         {Object.entries(states).map(([id, state]) =>
             <BoardGame
                 key={id}

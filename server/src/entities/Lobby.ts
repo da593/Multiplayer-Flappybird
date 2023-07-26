@@ -45,9 +45,14 @@ export class Lobby extends Entity {
         return playerId;
     }
 
-    public removePlayer(player:Player):void {
-        const index = this.players.findIndex((elem:Player) => elem.getEntityId() === player.getEntityId());
+    public removePlayer(playerId:string):void {
+        const index = this.players.findIndex((elem:Player) => elem.getEntityId() === playerId);
         this.players.splice(index,1);
+        this.game?.removePlayer(playerId);
+    }
+
+    public getNumPlayers(): number {
+        return this.players.length;
     }
 
     public getLobbyData(): LobbyData {

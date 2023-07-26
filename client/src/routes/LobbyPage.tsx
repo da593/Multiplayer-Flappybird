@@ -21,10 +21,15 @@ export function LobbyPage() {
             onJoinLobby(data.players)
         })
 
+        socket.on(Events.GetLatency, (cb: () => void) => {
+            cb();
+        });
+
         return () => {
             socket.off(Events.JoinLobby);
+            socket.off(Events.GetLatency);
         }
-    },[])
+    },[socket])
 
     return (
         <>

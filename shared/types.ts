@@ -42,10 +42,12 @@ export interface Dimensions_I {
 
 
 export const Events = {
+    GetLatency: 'get-latency',
     CreateLobby: 'create-lobby',
     JoinLobby: 'join-lobby',
     StartGame: 'start-game',
     UpdateGame: 'update-game',
+    PlayerInput: 'player-input',
     Restart: 'restart-game',
     RestartRequested: 'restart-requested',
 } as const;
@@ -56,9 +58,11 @@ export interface ClientToServerEvents {
     [Events.CreateLobby]: (data: CreateLobbyArgs, cb:Ack<CreateLobbyResponse>) => void;
     [Events.StartGame]: (data:StartGameArgs) => void;
     [Events.JoinLobby]: (data: JoinLobbyArgs, cb:Ack<JoinLobbyResponse>) => void;
+    [Events.PlayerInput]: (data: IdFields) => void;
 }
     
 export interface ServerToClientEvents {
+    [Events.GetLatency]: (cb: () => void) => void;
     [Events.JoinLobby]: (data: JoinLobbyResponse) => void;
     [Events.StartGame]: () => void;
     [Events.UpdateGame]: (data: GameData) => void;
@@ -68,6 +72,9 @@ export type ClientSocket = SocketIOClientSocket<ServerToClientEvents,ClientToSer
 export type ServerSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
 export type ServerManager = Server<ClientToServerEvents, ServerToClientEvents>;
 
+export interface GetLatencyResponse {
+    now: number;
+}
 
 export interface IdFields {
     lobbyId: string;
@@ -87,6 +94,7 @@ export interface LobbyData {
   
 export type CreateLobbyArgs = {
     maxPlayers: number;
+    socketId: string;
 };
   
 export interface CreateLobbyResponse extends LobbyData {
@@ -95,6 +103,7 @@ export interface CreateLobbyResponse extends LobbyData {
   
 export interface JoinLobbyArgs {
     lobbyId: string;
+    socketId: string;
     playerId?: string;
 }
   

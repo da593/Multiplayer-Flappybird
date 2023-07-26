@@ -22,7 +22,7 @@ export function MainPage() {
 
     const createLobby = async (maxPlayers: number) => {
         try {
-            const response = await socket.emitWithAck(Events.CreateLobby, {maxPlayers: maxPlayers});
+            const response = await socket.emitWithAck(Events.CreateLobby, {maxPlayers: maxPlayers, socketId: socket.id});
             const endpoint: string = "lobby/" + response.lobbyId;
             navigate(endpoint, {state: {...response}});
         } 
@@ -35,7 +35,7 @@ export function MainPage() {
 
         const lobbyId = lobbyText;
         try {
-            const response = await socket.emitWithAck(Events.JoinLobby, {lobbyId: lobbyId});
+            const response = await socket.emitWithAck(Events.JoinLobby, {lobbyId: lobbyId, socketId: socket.id});
             const endpoint: string = "lobby/" + response.lobbyId;
             navigate(endpoint, {state: {...response}});
         } 

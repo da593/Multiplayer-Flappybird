@@ -1,7 +1,6 @@
 import { Entity } from "./Entity";
-import { BoxCoordinates, INITIAL_STATE, PipeState_I, PlayerState_I, calculateNewBirdCoords, detectCollision } from "@flappyblock/shared";
+import { BoxCoordinates, GAME_DIMENSIONS, INITIAL_STATE, PipeState_I, PlayerState_I, calculateBirdCoords, calculateNewBirdCoords, detectCollision } from "@flappyblock/shared";
 import { Pipe } from "./Pipe";
-
 
 
 export class Player extends Entity {
@@ -19,8 +18,11 @@ export class Player extends Entity {
     }
 
     update(): void {
-        this.hasCollided = detectCollision(this.birdCoords, this.getPipeState().gapCoords)
-        this.birdCoords = calculateNewBirdCoords(this.birdCoords);
+        const currPipeCoords = this.getPipeState().gapCoords;
+        const currBirdCoords = this.birdCoords;
+        this.hasCollided = detectCollision(this.birdCoords, currPipeCoords);
+        this.addScore(currBirdCoords, currPipeCoords);
+        this.birdCoords = calculateNewBirdCoords(currBirdCoords);
         this.pipe.update();
     }
     
@@ -37,8 +39,17 @@ export class Player extends Entity {
         return this.pipe.getState();
     }
 
-    addScore(): void {
-        this.score++;
+    addScore(birdCoords: BoxCoordinates, pipeCoords: BoxCoordinates): void {
+        if (birdCoords.topLeft.x === pipeCoords.topRight.x + 1) {
+            this.score++;
+        }
+    }
+    
+    userInput() {
+        if (this.birdCoords.topLeft.y > 0 && !this.hasCollided) {
+            const newBirdCoords =  calculateBirdCoords(this.birdCoords.topLeft.y - GAME_DIMENSIONS.Y_FLY_UP);
+            this.birdCoords = newBirdCoords;
+        }
     }
 
 }
