@@ -45,6 +45,7 @@ export const Events = {
     GetLatency: 'get-latency',
     CreateLobby: 'create-lobby',
     JoinLobby: 'join-lobby',
+    LeaveLobby: 'leave-lobby',
     StartGame: 'start-game',
     UpdateGame: 'update-game',
     PlayerInput: 'player-input',
@@ -58,6 +59,7 @@ export interface ClientToServerEvents {
     [Events.CreateLobby]: (data: CreateLobbyArgs, cb:Ack<CreateLobbyResponse>) => void;
     [Events.StartGame]: (data:StartGameArgs) => void;
     [Events.JoinLobby]: (data: JoinLobbyArgs, cb:Ack<JoinLobbyResponse>) => void;
+    [Events.LeaveLobby]: (data: LeaveLobbyArgs) => void;
     [Events.PlayerInput]: (data: IdFields) => void;
 }
     
@@ -109,6 +111,10 @@ export interface JoinLobbyArgs {
   
 export interface JoinLobbyResponse extends LobbyData {
       playerId: string;
+}
+
+export interface LeaveLobbyArgs {
+    socketId: string;
 }
 
 

@@ -10,8 +10,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "install-all": "(cd shared && npm install) && (cd client && npm install) && (cd server && npm install) && npm install",
-    "start": "(cd client && npm start) & (cd server && npm start)",
-    "build": "(cd server && npm run build) & (cd client && npm run build)",
+    "start": "(cd client && npm start) && (cd server && npm start)",
+    "build": "(cd server && npm run build) && (cd client && npm run build) && (cd shared && npm run build)",
     "build-all": "export NODE_ENV=production && (cd shared && npm run build-prod) && (cd server && npm run build-prod) && (cd client && npm run build-prod)"
   },
   "repository": {

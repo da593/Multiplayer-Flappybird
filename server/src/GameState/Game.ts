@@ -41,7 +41,7 @@ export class Game {
 		const gameLoopId = setInterval(() => {
 			if (this.shouldEnd || this.getNumPlayers() <= 0) {
 				clearInterval(gameLoopId);
-				console.log("clear update")
+				console.log("clear game")
 			}
 			this.players.forEach((player: Player) => {
 				player.update();

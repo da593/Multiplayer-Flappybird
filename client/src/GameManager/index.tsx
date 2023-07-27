@@ -122,7 +122,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             setStates(data.state);
         })
         return () => {
-            socket.off(Events.StartGame)
+            socket.off(Events.StartGame);
             socket.off(Events.UpdateGame);
         }
     }, [socket]);

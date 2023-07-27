@@ -39,12 +39,16 @@ class LobbyManager {
     }
 
     public removeSocket(socketId: string) {
+        this.removePlayer(socketId);
+        this.socketToIds.delete(socketId);
+    }
+
+    public removePlayer(socketId: string) {
         const idFields = this.socketToIds.get(socketId);
         if (idFields) {
             const {playerId, lobbyId} = idFields;
             const lobby = this.getLobby(idFields.lobbyId);
             lobby.removePlayer(playerId);
-            this.socketToIds.delete(socketId);
             if (lobby.getNumPlayers() <= 0) {
                 this.#lobbies.delete(lobbyId);
             }

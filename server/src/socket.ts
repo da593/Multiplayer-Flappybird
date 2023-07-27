@@ -2,6 +2,7 @@ import { Ack, ClientToServerEvents, CreateLobbyArgs, CreateLobbyResponse, Events
 import { createLobby } from 'handlers/createLobby';
 import { joinLobby } from 'handlers/joinLobby';
 import { playerInput } from 'handlers/playerInput';
+import { removePlayer } from 'handlers/removePlayer';
 import { removeSocket } from 'handlers/removeSocket';
 import { startGame } from 'handlers/startGame';
 import { updateGame } from 'handlers/updateGame';
@@ -28,6 +29,8 @@ process.on('warning', e => console.warn(e.stack));
 //run build if socket keeps creating a new connection
 io.on("connection", (socket) => {
     console.log("New connection: ",socket.id);
+
+
     let isConnected = true;
     socket.on("disconnect", () => {
         console.log("Lost Connection", socket.id);
@@ -35,6 +38,14 @@ io.on("connection", (socket) => {
         removeSocket(socket.id);
     })
 
+    const getPing = (start: number): number => {
+        let latency = 0;
+        io.emit(Events.GetLatency, () => {
+            latency = Date.now() - start;
+            console.log(latency);
+        });
+        return latency;
+    }
 
     socket.on(Events.CreateLobby, (args: CreateLobbyArgs, cb: Ack<CreateLobbyResponse>) => {
         createLobby(args, cb).then((data) => {
@@ -43,22 +54,13 @@ io.on("connection", (socket) => {
             console.log(e);
         });
 
-        let start = Date.now();
-        let latency = 0;
-        io.emit(Events.GetLatency, () => {
-            latency = Date.now() - start;
-            console.log(latency);
-        });
+        let latency = getPing(Date.now());
         const id = setInterval(() => {
             if (latency > 5000 || !isConnected) { 
                 clearInterval(id);
-                console.log("clear join"); 
+                console.log("clear ping create"); 
             }
-            start = Date.now();
-            io.emit(Events.GetLatency, () => {
-                latency = Date.now() - start;
-              console.log(latency);
-            });
+            latency = getPing(Date.now());
         }, 25000);   
     })
 
@@ -70,17 +72,14 @@ io.on("connection", (socket) => {
                 console.log(e);
             });
 
-        let duration = 0;
-        const id = setInterval(() => {
-            if (duration > 5000 || !isConnected) {
-                clearInterval(id)
-            }
-            const start = Date.now();
-            io.emit(Events.GetLatency, () => {
-                duration = Date.now() - start;
-                console.log(duration);
-            });
-        }, 25000);   
+            let latency = getPing(Date.now());
+            const id = setInterval(() => {
+                if (latency > 5000 || !isConnected) { 
+                    clearInterval(id);
+                    console.log("clear ping join"); 
+                }
+                latency = getPing(Date.now());
+            }, 25000);  
     })
 
     socket.on(Events.StartGame, (args: StartGameArgs) => {
@@ -98,11 +97,16 @@ io.on("connection", (socket) => {
             }).catch(e => {
                 console.log(e);
             })
-        }, game_tick)
+        }, game_tick);
     })
 
     socket.on(Events.PlayerInput, (args: IdFields) => {
         playerInput(args.lobbyId, args.playerId);
+    })
+
+    socket.on(Events.LeaveLobby, (args) => {
+        isConnected = false;
+        removePlayer(args.socketId);
     })
 
 })
