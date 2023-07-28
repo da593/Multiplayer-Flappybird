@@ -2,6 +2,9 @@
   "name": "@flappyblock/server",
   "version": "1.0.0",
   "description": "",
+  "engines": {
+    "node": ">=15.14.0"
+  },
   "scripts": {
     "build": "tsc",
     "start": "tsx watch src/index.ts",
