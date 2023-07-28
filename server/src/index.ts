@@ -3,7 +3,7 @@ import express, {Request, Response} from 'express';
 import http from 'http';
 import cors from 'cors';
 import {attachSocket} from 'socket.js';
-import { GAME_DIMENSIONS } from '@flappyblock/shared/constants.js';
+import { GAME_DIMENSIONS } from '@flappyblock/shared';
 
 
 const app = express();
