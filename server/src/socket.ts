@@ -1,4 +1,4 @@
-import { Ack, ClientToServerEvents, CreateLobbyArgs, CreateLobbyResponse, Events, IdFields, JoinLobbyArgs, JoinLobbyResponse, ServerToClientEvents, StartGameArgs, game_tick } from '@flappyblock/shared';
+import { Ack, ClientToServerEvents, CreateLobbyArgs, CreateLobbyResponse, Events, IdFields, JoinLobbyArgs, JoinLobbyResponse, LeaveLobbyArgs, ServerToClientEvents, StartGameArgs, game_tick } from '@flappyblock/shared';
 import { createLobby } from 'handlers/createLobby';
 import { joinLobby } from 'handlers/joinLobby';
 import { playerInput } from 'handlers/playerInput';
@@ -104,7 +104,7 @@ io.on("connection", (socket) => {
         playerInput(args.lobbyId, args.playerId);
     })
 
-    socket.on(Events.LeaveLobby, (args) => {
+    socket.on(Events.LeaveLobby, (args: LeaveLobbyArgs) => {
         isConnected = false;
         removePlayer(args.socketId);
     })
