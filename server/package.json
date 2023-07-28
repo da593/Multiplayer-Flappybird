@@ -2,11 +2,9 @@
   "name": "@flappyblock/server",
   "version": "1.0.0",
   "description": "",
-  "engines": {
-    "node": ">=15.14.0"
-  },
+  "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p .",
     "start": "tsx watch src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
