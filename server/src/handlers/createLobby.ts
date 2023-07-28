@@ -1,4 +1,4 @@
-import { lobbyManager } from "Managers/LobbyManager";
+import { lobbyManager } from "Managers/LobbyManager.js";
 import { Ack, CreateLobbyArgs, CreateLobbyResponse } from "@flappyblock/shared";
 
 

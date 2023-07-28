@@ -1,5 +1,5 @@
 import { GameData, GameState, INITIAL_STATE, game_tick } from "@flappyblock/shared";
-import { Player } from "entities/Player";
+import { Player } from "entities/Player.js";
 
 export class Game {
 	players: Array<Player>

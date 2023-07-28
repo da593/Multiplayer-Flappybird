@@ -1,5 +1,5 @@
-import { Lobby } from "entities/Lobby";
-import { EntityManager, entityManager } from "./EntityManager";
+import { Lobby } from "entities/Lobby.js";
+import { EntityManager, entityManager } from "./EntityManager.js";
 import { IdFields } from "@flappyblock/shared";
 
 

@@ -1,4 +1,4 @@
-import { lobbyManager } from "Managers/LobbyManager";
+import { lobbyManager } from "Managers/LobbyManager.js";
 import { Ack, JoinLobbyArgs, JoinLobbyResponse } from "@flappyblock/shared";
 
 export async function joinLobby(args: JoinLobbyArgs, cb: Ack<JoinLobbyResponse>): Promise<JoinLobbyResponse> {
