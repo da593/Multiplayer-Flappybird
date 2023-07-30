@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { Entity } from "entities/Entity.js";
+import { Entity } from "#@/entities/Entity.js";
 
 export class EntityManager {
     #uniqueIds: Set<string>;

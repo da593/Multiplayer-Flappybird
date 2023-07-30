@@ -1,6 +1,6 @@
-import { Entity } from "./Entity";
 import { BoxCoordinates, GAME_DIMENSIONS, INITIAL_STATE, PipeState_I, PlayerState_I, calculateBirdCoords, calculateNewBirdCoords, detectCollision } from "@flappyblock/shared";
-import { Pipe } from "./Pipe";
+import { Entity } from "./Entity.js";
+import { Pipe } from "./Pipe.js";
 
 
 export class Player extends Entity {

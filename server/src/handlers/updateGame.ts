@@ -1,5 +1,5 @@
 import { GameData } from "@flappyblock/shared";
-import { lobbyManager } from "Managers/LobbyManager.js";
+import { lobbyManager } from "#@/Managers/LobbyManager.js";
 
 export async function updateGame(lobbyId: string): Promise<GameData> {
     const lobby = lobbyManager.getLobby(lobbyId);

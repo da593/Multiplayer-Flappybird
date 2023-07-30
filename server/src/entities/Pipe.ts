@@ -1,4 +1,4 @@
-import { Entity } from "./Entity";
+import { Entity } from "./Entity.js";
 import { BoxCoordinates, INITIAL_STATE, PipeState_I, calculateNewGapCoords } from "@flappyblock/shared";
 
 export class Pipe extends Entity {

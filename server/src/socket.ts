@@ -1,14 +1,15 @@
 import { Ack, ClientToServerEvents, CreateLobbyArgs, CreateLobbyResponse, Events, IdFields, JoinLobbyArgs, JoinLobbyResponse, LeaveLobbyArgs, ServerToClientEvents, StartGameArgs, game_tick } from '@flappyblock/shared';
-import { createLobby } from 'handlers/createLobby.js';
-import { joinLobby } from 'handlers/joinLobby.js';
-import { playerInput } from 'handlers/playerInput.js';
-import { removePlayer } from 'handlers/removePlayer.js';
-import { removeSocket } from 'handlers/removeSocket.js';
-import { startGame } from 'handlers/startGame.js';
-import { updateGame } from 'handlers/updateGame.js';
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { clearInterval } from 'timers';
+import { removeSocket } from '#@/handlers/removeSocket.js';
+import { createLobby } from '#@/handlers/createLobby.js';
+import { joinLobby } from '#@/handlers/joinLobby.js';
+import { playerInput } from '#@/handlers/playerInput.js';
+import { removePlayer } from '#@/handlers/removePlayer.js';
+import { startGame } from '#@/handlers/startGame.js';
+import { updateGame } from '#@/handlers/updateGame.js';
+
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents>();
 
