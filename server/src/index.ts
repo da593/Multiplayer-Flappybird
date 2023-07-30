@@ -11,12 +11,14 @@ const app = express();
 const httpserver = http.createServer(app);
 attachSocket(httpserver);
 
-httpserver.listen(4000, () => {
-  console.log('listening on :4000');
+const port = 4000;
+
+httpserver.listen(port, () => {
+  console.log("listening on :", port);
 });
 
 app.use(cors());
-const orig = process.env.LOCAL_PORT_REQUEST;
+const orig = process.env.NODE_ENV === "production" ? process.env.PROD_PORT_REQUEST : process.env.DEV_PORT_REQUEST;
 const corsOptions = {
   origin: orig,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204

@@ -114,9 +114,9 @@ io.on("connection", (socket) => {
 
 
 export function attachSocket(server: HttpServer) {
-    const domain = process.env.LOCAL_PORT_REQUEST;
+    const orig = process.env.NODE_ENV === "production" ? process.env.PROD_PORT_REQUEST : process.env.DEV_PORT_REQUEST;
     const corsOptions = {
-        origin: domain,
+        origin: orig,
         optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
     }
     
