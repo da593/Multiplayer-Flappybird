@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`render bird given props 1`] = `
-<canvas
-  className="canvas-item"
-  height={640}
-  width={540}
-/>
-`;
