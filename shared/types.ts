@@ -56,16 +56,16 @@ export const Events = {
 export type Ack<ResponsePayload> = (payload: ResponsePayload) => void;
   
 export interface ClientToServerEvents {
-    [Events.CreateLobby]: (data: CreateLobbyArgs, cb:Ack<CreateLobbyResponse>) => void;
+    [Events.CreateLobby]: (data: CreateLobbyArgs, cb:Ack<LobbyResponse>) => void;
     [Events.StartGame]: (data:StartGameArgs) => void;
-    [Events.JoinLobby]: (data: JoinLobbyArgs, cb:Ack<JoinLobbyResponse>) => void;
+    [Events.JoinLobby]: (data: JoinLobbyArgs, cb:Ack<LobbyResponse>) => void;
     [Events.LeaveLobby]: (data: LeaveLobbyArgs) => void;
     [Events.PlayerInput]: (data: IdFields) => void;
 }
     
 export interface ServerToClientEvents {
     [Events.GetLatency]: (cb: () => void) => void;
-    [Events.JoinLobby]: (data: JoinLobbyResponse) => void;
+    [Events.JoinLobby]: (data: LobbyResponse) => void;
     [Events.StartGame]: () => void;
     [Events.UpdateGame]: (data: GameData) => void;
 }
@@ -99,7 +99,7 @@ export type CreateLobbyArgs = {
     socketId: string;
 };
   
-export interface CreateLobbyResponse extends LobbyData {
+export interface LobbyResponse extends LobbyData {
     playerId: string;
 }
   
@@ -109,10 +109,6 @@ export interface JoinLobbyArgs {
     playerId?: string;
 }
   
-export interface JoinLobbyResponse extends LobbyData {
-      playerId: string;
-}
-
 export interface LeaveLobbyArgs {
     socketId: string;
 }
