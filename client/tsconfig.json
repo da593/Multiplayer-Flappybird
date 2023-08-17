@@ -19,10 +19,11 @@
         "name": "next"
       }
     ],
-    // "paths": {
-    //   "@/*": ["./*"]
-    // }
+    "baseUrl": "app",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../old-client/src/routes/loaders.ts", "../old-client/src/api/axios.ts"],
   "exclude": ["node_modules"]
 }

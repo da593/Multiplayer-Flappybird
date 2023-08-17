@@ -1,0 +1,21 @@
+nav {
+    width: 100%;
+    font-size: 1.2rem;
+    background-color: #22252b;
+    color: white;
+
+    margin-bottom: 3%;
+}
+
+.menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.flex-left {
+    display: flex;
+    align-items: left;
+    gap: 2em;
+}

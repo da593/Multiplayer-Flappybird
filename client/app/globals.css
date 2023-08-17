@@ -4,15 +4,15 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-rgb: 43, 49, 64;
+  --background-end-rgb: 43, 49, 64;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-start-rgb: 43, 49, 64;
+    --background-end-rgb: 43, 49, 64;
   }
 }
 
@@ -24,4 +24,82 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+
+
+a, a:visited {
+  text-decoration: none;
+  color: inherit;
+}
+
+li {
+  list-style-type: none;
+}
+button {
+  all: unset;
+  cursor: pointer;
+}
+.body-container {
+  margin: auto;
+  justify-content: center;
+  text-align: center;
+  
+}
+
+.canvas-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.canvas-item, .navigation-menu, .align-center {
+  z-index: 1;
+  position: absolute;
+}
+
+
+.navigation-menu {
+  display: flex;
+  align-self: center;
+  color: black;
+}
+
+.score {
+  z-index: 1;
+  color: white;
+  font-size: 2.5rem;
+
+}
+
+#background-layer {
+  z-index: -1;
+}
+
+.opaque {
+  opacity: 0.5;
+}
+
+.navigation-menu {
+  background-color: orangered;
+  border: solid black 3px; 
+}
+
+.navigation-menu > ul {
+  margin: 1rem 1rem;
+}
+
+.navigation-menu > ul > li {
+  background-color: #c5c9d1;
+  border: solid black 2px;
+  margin: 1rem 0rem;
+  padding: 0.5rem 0.5rem;
+  font-size: 1.5rem;
+}
+
+.popup {
+  display: block;
+  z-index: 1;
+  position: absolute;
 }
