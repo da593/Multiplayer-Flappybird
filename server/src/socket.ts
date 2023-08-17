@@ -1,4 +1,5 @@
-import { Ack, ClientToServerEvents, CreateLobbyArgs, CreateLobbyResponse, Events, IdFields, JoinLobbyArgs, JoinLobbyResponse, LeaveLobbyArgs, ServerToClientEvents, StartGameArgs, game_tick } from '@flappyblock/shared';
+import 'dotenv/config';
+import { Ack, ClientToServerEvents, CreateLobbyArgs, LobbyResponse, Events, IdFields, JoinLobbyArgs, LeaveLobbyArgs, ServerToClientEvents, StartGameArgs, game_tick } from '@flappyblock/shared';
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { clearInterval } from 'timers';
@@ -48,7 +49,7 @@ io.on("connection", (socket) => {
         return latency;
     }
 
-    socket.on(Events.CreateLobby, (args: CreateLobbyArgs, cb: Ack<CreateLobbyResponse>) => {
+    socket.on(Events.CreateLobby, (args: CreateLobbyArgs, cb: Ack<LobbyResponse>) => {
         createLobby(args, cb).then((data) => {
             joinRooms(data,socket);
         }).catch(e => {
@@ -65,7 +66,7 @@ io.on("connection", (socket) => {
         }, 25000);   
     })
 
-    socket.on(Events.JoinLobby, (args: JoinLobbyArgs, cb: Ack<JoinLobbyResponse>) => {
+    socket.on(Events.JoinLobby, (args: JoinLobbyArgs, cb: Ack<LobbyResponse>) => {
         joinLobby(args, cb).then((data) => {
             joinRooms(data,socket);
             io.to(data.lobbyId).emit(Events.JoinLobby, data);
@@ -114,13 +115,15 @@ io.on("connection", (socket) => {
 
 
 export function attachSocket(server: HttpServer) {
-    const orig = process.env.NODE_ENV === "production" ? process.env.PROD_PORT_REQUEST : process.env.DEV_PORT_REQUEST;
-    const corsOptions = {
+    io.attach(server, {
+        cors: getCorsOptions(),
+    });
+}
+
+export function getCorsOptions() {
+    const orig = process.env.PORT_REQUEST;
+    return  {
         origin: orig,
         optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
     }
-    
-    io.attach(server, {
-        cors: corsOptions
-    });
 }
