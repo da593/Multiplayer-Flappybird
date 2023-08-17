@@ -1,11 +1,7 @@
-interface ChildrenProps {
-    children:React.ReactNode,
-    
-}
+import { ChildrenProps } from "./types";
 
-export function BodyContainer(props:ChildrenProps) {
 
-        
+export function BodyContainer(props:ChildrenProps) {        
     return (
         <div className="body-container">
             <div className="canvas-container">
