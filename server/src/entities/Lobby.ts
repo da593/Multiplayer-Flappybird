@@ -1,9 +1,10 @@
+import { LobbyData } from "@flappyblock/shared";
 import { Game } from "#@/GameState/Game.js";
 import { Entity } from "./Entity.js";
 import { Player } from "./Player.js";
 import { entityManager } from "#@/Managers/EntityManager.js";
 import { Pipe } from "./Pipe.js";
-import { LobbyData } from "@flappyblock/shared";
+
 
 
 

@@ -1,4 +1,4 @@
-import { lobbyManager } from "#@/Managers/LobbyManager";
+import { lobbyManager } from "#@/Managers/LobbyManager.js";
 import { EndGameData } from "@flappyblock/shared";
 
 export async function endGame(lobbyId: string): Promise<EndGameData> {

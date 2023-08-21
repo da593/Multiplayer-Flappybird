@@ -1,7 +1,6 @@
+import { IdFields } from "@flappyblock/shared";
 import { Lobby } from "#@/entities/Lobby.js";
 import { EntityManager, entityManager } from "./EntityManager.js";
-import { IdFields } from "@flappyblock/shared";
-
 
 class LobbyManager {
     #lobbies: Map<String,Lobby>;
