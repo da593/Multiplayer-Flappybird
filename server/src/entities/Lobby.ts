@@ -18,7 +18,26 @@ export class Lobby extends Entity {
         this.players = new Array();
 
     }
-    
+
+    public getNumPlayers(): number {
+        return this.players.length;
+    }
+
+    public getLobbyData(): LobbyData {
+        const players = this.players.map((player: Player) => player.getEntityId());
+        const data: LobbyData = {
+            lobbyId: this.getEntityId(),
+            players: players
+        }
+        return data;
+    }
+
+    public getGame() {
+        if (!this.game) {
+            throw ("Game has not started");
+        }
+        return this.game;
+    }
     
     public initalizeGame(): void {
         if (this.players.length < 1) {
@@ -51,24 +70,6 @@ export class Lobby extends Entity {
         this.game?.removePlayer(playerId);
     }
 
-    public getNumPlayers(): number {
-        return this.players.length;
-    }
 
-    public getLobbyData(): LobbyData {
-        const players = this.players.map((player: Player) => player.getEntityId());
-        const data: LobbyData = {
-            lobbyId: this.getEntityId(),
-            players: players
-        }
-        return data;
-    }
-
-    public getGame() {
-        if (!this.game) {
-            throw ("Game has not started");
-        }
-        return this.game;
-    }
     
 }

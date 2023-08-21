@@ -29,7 +29,7 @@ class LobbyManager {
     public getLobby(id:string): Lobby {
         const lobby = this.#lobbies.get(id);
         if (!lobby) {
-            throw ("Lobby does not exist");
+            throw ("Lobby does not exist " + id);
         }
         return lobby;
     }

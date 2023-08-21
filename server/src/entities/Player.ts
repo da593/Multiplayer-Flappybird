@@ -17,15 +17,6 @@ export class Player extends Entity {
         this.pipe = pipe;
     }
 
-    update(): void {
-        const currPipeCoords = this.getPipeState().gapCoords;
-        const currBirdCoords = this.birdCoords;
-        this.hasCollided = detectCollision(this.birdCoords, currPipeCoords);
-        this.addScore(currBirdCoords, currPipeCoords);
-        this.birdCoords = calculateNewBirdCoords(currBirdCoords);
-        this.pipe.update();
-    }
-    
     getPlayerState(): PlayerState_I {
         return {
             birdCoords: this.birdCoords,
@@ -38,6 +29,24 @@ export class Player extends Entity {
     getPipeState(): PipeState_I {
         return this.pipe.getState();
     }
+
+    getHasCollided(): boolean {
+        return this.hasCollided;
+    }
+
+    getScore(): number {
+        return this.score;
+    }
+
+    update(): void {
+        const currPipeCoords = this.getPipeState().gapCoords;
+        const currBirdCoords = this.birdCoords;
+        this.hasCollided = detectCollision(this.birdCoords, currPipeCoords);
+        this.addScore(currBirdCoords, currPipeCoords);
+        this.birdCoords = calculateNewBirdCoords(currBirdCoords);
+        this.pipe.update();
+    }
+    
 
     addScore(birdCoords: BoxCoordinates, pipeCoords: BoxCoordinates): void {
         if (birdCoords.topLeft.x === pipeCoords.topRight.x + 1) {
