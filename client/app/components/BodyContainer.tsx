@@ -1,11 +1,10 @@
 import { ChildrenProps } from "./types";
 
-
-export function BodyContainer(props:ChildrenProps) {        
+export function BodyContainer({children}:ChildrenProps) {        
     return (
         <div className="body-container">
             <div className="canvas-container">
-                {props.children}
+                {children}
             </div>
         </div>
     )
