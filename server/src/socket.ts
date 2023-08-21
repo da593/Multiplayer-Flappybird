@@ -10,8 +10,8 @@ import { playerInput } from '#@/handlers/playerInput.js';
 import { removePlayer } from '#@/handlers/removePlayer.js';
 import { startGame } from '#@/handlers/startGame.js';
 import { updateGame } from '#@/handlers/updateGame.js';
-import { lobbyManager } from './Managers/LobbyManager';
-import { endGame } from './handlers/endGame';
+import { lobbyManager } from '#@/Managers/LobbyManager';
+import { endGame } from '#@/handlers/endGame';
 
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents>();

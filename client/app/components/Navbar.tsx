@@ -12,7 +12,6 @@ export function Navbar() {
 
     const leaveLobby = () => {
         socket.emit(Events.LeaveLobby, {socketId: socket.id});
-        console.log(socket.id);
     }
 
     return (
