@@ -48,6 +48,7 @@ export const Events = {
     LeaveLobby: 'leave-lobby',
     StartGame: 'start-game',
     UpdateGame: 'update-game',
+    EndGame: 'end-game',
     PlayerInput: 'player-input',
     Restart: 'restart-game',
     RestartRequested: 'restart-requested',
@@ -68,6 +69,7 @@ export interface ServerToClientEvents {
     [Events.JoinLobby]: (data: LobbyResponse) => void;
     [Events.StartGame]: () => void;
     [Events.UpdateGame]: (data: GameData) => void;
+    [Events.EndGame]: (data: EndGameData) => void;
 }
 
 export type ClientSocket = SocketIOClientSocket<ServerToClientEvents,ClientToServerEvents>;
@@ -116,6 +118,11 @@ export interface LeaveLobbyArgs {
 
 export interface StartGameArgs {
     lobbyId: string;
-    shouldEnd?: boolean;
 }
+
+export interface EndGameData {
+    lobbyId: string;
+    winner: string;
+}
+
   

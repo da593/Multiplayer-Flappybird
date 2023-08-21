@@ -22,9 +22,16 @@ export const INITIAL_STATE: GameState =  {
     pipe: {
         gapCoords: calculateGapCoords(GAME_DIMENSIONS.GAME_WIDTH, randomizeYGapLocation()),
     },
-
 }
 
 export const game_tick: number = 50;
+export const ping_rate: number = 25000;
 
 export const KEYBINDS: Array<string> = ["w","ArrowUp"]
+
+export enum WinState {
+    NO_WINNER = "NO WINNER",
+    DRAW = "DRAW",
+    SELF_WIN = "YOU WIN",
+    OPPONENT_WIN = "OPPONENT WINS",
+}
