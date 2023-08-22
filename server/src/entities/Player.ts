@@ -47,6 +47,12 @@ export class Player extends Entity {
         this.pipe.update();
     }
     
+    resetState(): void {
+        this.birdCoords = INITIAL_STATE.player.birdCoords;
+        this.score = INITIAL_STATE.player.score;
+        this.hasCollided = INITIAL_STATE.player.hasCollided;
+        this.pipe.resetState();
+    }
 
     addScore(birdCoords: BoxCoordinates, pipeCoords: BoxCoordinates): void {
         if (birdCoords.topLeft.x === pipeCoords.topRight.x + 1) {

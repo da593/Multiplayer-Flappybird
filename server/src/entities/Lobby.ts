@@ -11,13 +11,13 @@ import { Pipe } from "./Pipe.js";
 export class Lobby extends Entity {
     players: Array<Player>;
     maxPlayers:number;
-    game?:Game;
+    game:Game;
 
     constructor(id:string, maxPlayers:number) { 
         super(id);
         this.maxPlayers = maxPlayers;
         this.players = new Array();
-
+        this.game = new Game();
     }
 
     public getNumPlayers(): number {
@@ -39,20 +39,19 @@ export class Lobby extends Entity {
         }
         return this.game;
     }
-    
-    public initalizeGame(): void {
-        if (this.players.length < 1) {
-            throw("Not enough players");
+
+    public startGame() {
+        if (this.game.getNumPlayers() <= 0 || this.players.length <= 0) {
+            throw ("No players to start game");
         }
-        else if (this.players.length > this.maxPlayers) {
-            throw("Too many players in lobby");
+        else if (this.game.getNumPlayers() > this.maxPlayers || this.players.length > this.maxPlayers) {
+            throw ("Too many players to start game");
         }
         else {
-            this.game = new Game(this.players);
+            this.game.startGame();
         }
     }
-
-
+    
     public addPlayer(): string {
         if (this.players.length >= this.maxPlayers) {
             throw("Lobby is full");
@@ -61,7 +60,8 @@ export class Lobby extends Entity {
         const newPipe = new Pipe(pipeId);
         const playerId = entityManager.generateId();
         const newPlayer = new Player(playerId, newPipe);
-        this.players.push(newPlayer)
+        this.players.push(newPlayer);
+        this.game?.addPlayer(newPlayer);
         return playerId;
     }
 
@@ -69,8 +69,7 @@ export class Lobby extends Entity {
         const index = this.players.findIndex((elem:Player) => elem.getEntityId() === playerId);
         this.players.splice(index,1);
         this.game?.removePlayer(playerId);
+       
     }
 
-
-    
 }

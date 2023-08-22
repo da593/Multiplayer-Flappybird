@@ -48,6 +48,7 @@ export const Events = {
     LeaveLobby: 'leave-lobby',
     StartGame: 'start-game',
     UpdateGame: 'update-game',
+    ResetGame: 'reset-game',
     EndGame: 'end-game',
     PlayerInput: 'player-input',
     Restart: 'restart-game',
@@ -58,7 +59,8 @@ export type Ack<ResponsePayload> = (payload: ResponsePayload) => void;
   
 export interface ClientToServerEvents {
     [Events.CreateLobby]: (data: CreateLobbyArgs, cb:Ack<LobbyResponse>) => void;
-    [Events.StartGame]: (data:StartGameArgs) => void;
+    [Events.StartGame]: (data: StartGameArgs) => void;
+    [Events.ResetGame]: (data: StartGameArgs) => void;
     [Events.JoinLobby]: (data: JoinLobbyArgs, cb:Ack<LobbyResponse>) => void;
     [Events.LeaveLobby]: (data: LeaveLobbyArgs) => void;
     [Events.PlayerInput]: (data: IdFields) => void;

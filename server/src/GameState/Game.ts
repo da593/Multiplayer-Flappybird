@@ -3,19 +3,14 @@ import { Player } from "#@/entities/Player.js";
 
 export class Game {
 	players: Array<Player>;
-	state: Record<string, GameState>;
+	state: Record<string, GameState>
 	deadPlayers: Set<string>;
 	winner: string;
 	shouldEnd: boolean;
 
-	constructor(players: Array<Player>) {
+	constructor() {
+		this.players = new Array()
 		this.state = {};
-
-		this.players = players;
-		players.forEach((player:Player) => {
-			this.state[player.getEntityId()] = INITIAL_STATE;
-		})
-		
 		this.deadPlayers = new Set();
 		this.winner = "none";
 		this.shouldEnd = false;
@@ -23,13 +18,6 @@ export class Game {
 
  	getNumPlayers(): number {
 		return this.players.length;
-	}
-
-	getState(): Record<string, GameState> {
-		this.players.forEach((player: Player) => {
-			this.state[player.getEntityId()] = {player: player.getPlayerState(), pipe: player.getPipeState() }
-		})
-		return this.state;
 	}
 
 	getWinner(): string {
@@ -40,9 +28,34 @@ export class Game {
 		return this.shouldEnd;
 	}
 
+	getState(): Record<string, GameState> {
+		this.players.forEach((player: Player) => {
+			this.state[player.getEntityId()] = {player: player.getPlayerState(), pipe: player.getPipeState() }
+		})
+		return this.state;
+	}
+
+	addPlayer(newPlayer: Player): void {
+		this.players.push(newPlayer);
+	}
+
 	removePlayer(playerId: string): void {
         const index = this.players.findIndex((elem:Player) => elem.getEntityId() === playerId);
         this.players.splice(index,1);
+	}
+
+	startGame(): void {
+		this.restartGame();
+		this.updateGame();
+	}
+
+	restartGame(): void {
+		this.deadPlayers = new Set();
+		this.winner = "none";
+		this.shouldEnd = false;
+		this.players.forEach((player: Player) => {
+			player.resetState()
+		})
 	}
 
 	updateGame(): void {

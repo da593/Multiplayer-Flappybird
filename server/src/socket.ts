@@ -12,6 +12,7 @@ import { startGame } from '#@/handlers/startGame.js';
 import { updateGame } from '#@/handlers/updateGame.js';
 import { lobbyManager } from '#@/Managers/LobbyManager.js';
 import { endGame } from '#@/handlers/endGame.js';
+import { resetGame } from '#@/handlers/resetGame.js';
 
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents>();
@@ -111,6 +112,10 @@ io.on("connection", (socket) => {
     socket.on(Events.LeaveLobby, (args: LeaveLobbyArgs) => {
         isConnected = false;
         removePlayer(args.socketId);
+    })
+
+    socket.on(Events.ResetGame, (args: StartGameArgs) => {
+        resetGame(args.lobbyId);
     })
 
 })
