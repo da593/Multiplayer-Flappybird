@@ -31,6 +31,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
         setStartGame(false);
         setEndGame(false);
         setWinner(WinState.NO_WINNER);
+        socket.emit(Events.ResetGame, {lobbyId: lobbyId});
     }
 
     const handleStartGame = () => {

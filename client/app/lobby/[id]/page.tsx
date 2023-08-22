@@ -14,6 +14,7 @@ export default function Page({ params }: { params: { id: string } }) {
   const socket = useContext(SocketContext);
   const lobbyData: LobbyResponse = useSelector(selectLobby);
   const [lobbyState, setLobbyState] = useState<LobbyResponse>(lobbyData);
+  const self_id = lobbyData.playerId;
   useEffect(() => {
 
     socket.on(Events.JoinLobby, (data: LobbyResponse) => {
@@ -32,9 +33,11 @@ export default function Page({ params }: { params: { id: string } }) {
 
   return (
     <BodyContainer>
+      <p>Your Id: {lobbyState.playerId}</p>
+      <p>Socket Id:{socket.id}</p>
       <GameManager
         lobbyId={params.id}
-        playerId_self={lobbyState.playerId}
+        playerId_self={self_id}
         players = {lobbyState.players} 
       />
     </BodyContainer>
