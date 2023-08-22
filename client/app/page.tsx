@@ -12,6 +12,7 @@ import { BoardBackground } from 'components/background';
 import { NavigationMenu } from 'components/NavigationMenu';
 import { useRouter } from 'next/navigation';
 import { selectLobby, updateLobby } from '@/lobby/[id]/lobbySlice';
+import { CanvasContainer } from 'components/CanvasContainer';
 
 export default function HomePage() {
     const socket = useContext(SocketContext);
@@ -57,6 +58,12 @@ export default function HomePage() {
 
     return (
         <>
+            <div className="popup" style={isOpened ? {display: "block"} : {display: "none"}}>
+                    <li><label>Enter Lobby Id</label></li>
+                    <li><input onChange={(e) => setLobbyText(e.target.value)}/></li>
+                    <li><button onClick={() => joinLobbyQueryRequest()}>Submit</button></li>
+            </div>
+        <CanvasContainer>
             <DimensionContext.Provider value={dimensions}>
                 <Pipe gapCoords={gapCoords}/>
                 <Bird isSelf={true} birdCoords={INITIAL_STATE.player.birdCoords}/>
@@ -66,12 +73,8 @@ export default function HomePage() {
                 <li> <button onClick={() => createLobby(1)}> Singleplayer </button> </li>
                 <li> <button onClick={() => createLobby(2)}> Create Lobby </button> </li>
                 <li> <button onClick={joinLobbyQuery}> Join Lobby </button> </li>
-                <div style={isOpened ? {display: "block"} : {display: "none"}}>
-                    <label>Enter Lobby Id</label>
-                    <input onChange={(e) => setLobbyText(e.target.value)}/>
-                    <button onClick={() => joinLobbyQueryRequest()}>Submit</button>
-                </div>
             </NavigationMenu>
+        </CanvasContainer>
         </>
     )
 }

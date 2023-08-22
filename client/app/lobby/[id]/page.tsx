@@ -2,12 +2,12 @@
 
 import { useContext, useEffect, useState } from 'react';
 import { Events, LobbyResponse } from '@flappyblock/shared';
-import { BodyContainer } from 'components/BodyContainer';
 import { SocketContext } from 'hooks/socketContext';
 import { useRouter } from 'next/navigation'
 import { GameManager } from './GameManager';
 import { selectLobby } from './lobbySlice'
 import { useSelector } from 'react-redux';
+import { CanvasContainer } from 'components/CanvasContainer';
 
 export default function Page({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -15,6 +15,8 @@ export default function Page({ params }: { params: { id: string } }) {
   const lobbyData: LobbyResponse = useSelector(selectLobby);
   const [lobbyState, setLobbyState] = useState<LobbyResponse>(lobbyData);
   const self_id = lobbyData.playerId;
+
+
   useEffect(() => {
 
     socket.on(Events.JoinLobby, (data: LobbyResponse) => {
@@ -32,14 +34,15 @@ export default function Page({ params }: { params: { id: string } }) {
   },[socket])
 
   return (
-    <BodyContainer>
-      <p>Your Id: {lobbyState.playerId}</p>
-      <p>Socket Id:{socket.id}</p>
-      <GameManager
-        lobbyId={params.id}
-        playerId_self={self_id}
-        players = {lobbyState.players} 
-      />
-    </BodyContainer>
+    <>
+      <p>Lobby Id: {params.id}</p>
+      <CanvasContainer>
+        <GameManager
+          lobbyId={params.id}
+          playerId_self={self_id}
+          players = {lobbyState.players} 
+        />
+      </CanvasContainer>
+    </>
   )
 }
