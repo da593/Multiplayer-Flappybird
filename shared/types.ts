@@ -46,6 +46,7 @@ export const Events = {
     CreateLobby: 'create-lobby',
     JoinLobby: 'join-lobby',
     LeaveLobby: 'leave-lobby',
+    LobbyDataToAllClients: 'new-lobby-data',
     StartGame: 'start-game',
     UpdateGame: 'update-game',
     ResetGame: 'reset-game',
@@ -68,8 +69,9 @@ export interface ClientToServerEvents {
     
 export interface ServerToClientEvents {
     [Events.GetLatency]: (cb: () => void) => void;
-    [Events.JoinLobby]: (data: LobbyResponse) => void;
-    [Events.StartGame]: () => void;
+    [Events.LobbyDataToAllClients]: (data: LobbyResponse) => void;
+    [Events.StartGame]: (data: ReadyCheck) => void;
+    [Events.ResetGame]: (data: ReadyCheck) => void;
     [Events.UpdateGame]: (data: GameData) => void;
     [Events.EndGame]: (data: EndGameData) => void;
 }
@@ -120,11 +122,16 @@ export interface LeaveLobbyArgs {
 
 export interface StartGameArgs {
     lobbyId: string;
+    playerId: string;
 }
 
 export interface EndGameData {
     lobbyId: string;
     winner: string;
+}
+
+export interface ReadyCheck {
+    numReady: number;
 }
 
   
