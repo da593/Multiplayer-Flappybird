@@ -7,7 +7,6 @@ import { removeSocket } from '#@/handlers/removeSocket.js';
 import { createLobby } from '#@/handlers/createLobby.js';
 import { joinLobby } from '#@/handlers/joinLobby.js';
 import { playerInput } from '#@/handlers/playerInput.js';
-import { removePlayer } from '#@/handlers/removePlayer.js';
 import { startGame } from '#@/handlers/startGame.js';
 import { updateGame } from '#@/handlers/updateGame.js';
 import { lobbyManager } from '#@/Managers/LobbyManager.js';
