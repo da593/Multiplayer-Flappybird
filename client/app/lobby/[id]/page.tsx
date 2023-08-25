@@ -19,7 +19,7 @@ export default function Page({ params }: { params: { id: string } }) {
 
   useEffect(() => {
 
-    socket.on(Events.JoinLobby, (data: LobbyResponse) => {
+    socket.on(Events.LobbyDataToAllClients, (data: LobbyResponse) => {
         setLobbyState(data);
     })
 
@@ -28,7 +28,7 @@ export default function Page({ params }: { params: { id: string } }) {
     });
 
     return () => {
-        socket.off(Events.JoinLobby);
+        socket.off(Events.LobbyDataToAllClients);
         socket.off(Events.GetLatency);
     }
   },[socket])
