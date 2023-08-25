@@ -13,6 +13,7 @@ import { updateGame } from '#@/handlers/updateGame.js';
 import { lobbyManager } from '#@/Managers/LobbyManager.js';
 import { endGame } from '#@/handlers/endGame.js';
 import { resetGame } from '#@/handlers/resetGame.js';
+import { leaveLobby } from '#@/handlers/leaveLobby.js';
 
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents>();
@@ -49,7 +50,7 @@ io.on("connection", (socket) => {
                 latency = Date.now() - latency;
                 if (latency > 5000 || !isConnected || shouldEnd) { 
                     clearInterval(id);
-                    console.log("clear ping create"); 
+                    console.log("clear ping"); 
                 }
                 console.log(latency);
             });
@@ -68,7 +69,7 @@ io.on("connection", (socket) => {
     socket.on(Events.JoinLobby, (args: JoinLobbyArgs, cb: Ack<LobbyResponse>) => {
         joinLobby(args, cb).then((data) => {
             joinRooms(data,socket);
-            io.to(data.lobbyId).emit(Events.JoinLobby, data);
+            io.to(data.lobbyId).emit(Events.LobbyDataToAllClients, data);
         }).catch(e => {
             console.log(e);
         });
@@ -78,17 +79,19 @@ io.on("connection", (socket) => {
 
     socket.on(Events.StartGame, (args: StartGameArgs) => {
         const {lobbyId} = args;
-        io.to(lobbyId).emit(Events.StartGame);
-        startGame(lobbyId);
+        const numReady = startGame(args);
+        io.to(args.lobbyId).emit(Events.StartGame, numReady);
         const timerId = setInterval(() => {
             const lobby = lobbyManager.getLobby(lobbyId);
-            const game = lobby.getGame();
-            shouldEnd = game.shouldEnd;
+            const game = lobby?.getGame();
+            if (game) {
+                shouldEnd = game.shouldEnd;
+            }
             if (!isConnected || shouldEnd) {
                 clearInterval(timerId);
                 console.log("clear start");
             }
-            if (game.shouldEnd) {
+            if (shouldEnd) {
                 endGame(lobbyId).then((data) => {
                     io.to(lobbyId).emit(Events.EndGame, data);
                 }).catch(e => {
@@ -103,20 +106,23 @@ io.on("connection", (socket) => {
                 })
             }
         }, game_tick);
-    })
+    });
 
     socket.on(Events.PlayerInput, (args: IdFields) => {
         playerInput(args.lobbyId, args.playerId);
-    })
+    });
 
     socket.on(Events.LeaveLobby, (args: LeaveLobbyArgs) => {
-        isConnected = false;
-        removePlayer(args.socketId);
-    })
+        leaveLobby(args).then((data) => {
+            io.to(data.lobbyId).emit(Events.LobbyDataToAllClients, data);
+            isConnected = false;
+        })
+    });
 
     socket.on(Events.ResetGame, (args: StartGameArgs) => {
-        resetGame(args.lobbyId);
-    })
+        const numReady = resetGame(args);
+        io.to(args.lobbyId).emit(Events.ResetGame, numReady);
+    });
 
 })
 

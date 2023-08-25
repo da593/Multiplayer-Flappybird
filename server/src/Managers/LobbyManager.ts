@@ -1,4 +1,4 @@
-import { IdFields } from "@flappyblock/shared";
+import { IdFields, LobbyData } from "@flappyblock/shared";
 import { Lobby } from "#@/entities/Lobby.js";
 import { EntityManager, entityManager } from "./EntityManager.js";
 
@@ -25,35 +25,47 @@ class LobbyManager {
 
     }
 
-    public getLobby(id:string): Lobby {
-        const lobby = this.#lobbies.get(id);
-        if (!lobby) {
-            throw ("Lobby does not exist " + id);
-        }
-        return lobby;
+    public getLobby(id:string): Lobby | undefined {
+        return this.#lobbies.get(id);;
     }
 
     public addSocket(socketId: string, playerId: string, lobbyId: string) {
         this.socketToIds.set(socketId, {playerId, lobbyId})
     }
 
-    public removeSocket(socketId: string) {
-        this.removePlayer(socketId);
+    public removeSocket(socketId: string): LobbyData {
+        const data = this.removePlayer(socketId);
         this.socketToIds.delete(socketId);
+        return data;
+        
     }
 
-    public removePlayer(socketId: string) {
+    private removePlayer(socketId: string): LobbyData {
         const idFields = this.socketToIds.get(socketId);
+        let data: LobbyData = {
+            lobbyId: "NO_LOBBY_FOUND",
+            players: [],
+        }
         if (idFields) {
             const {playerId, lobbyId} = idFields;
             const lobby = this.getLobby(idFields.lobbyId);
-            lobby.removePlayer(playerId);
-            if (lobby.getNumPlayers() <= 0) {
-                this.#lobbies.delete(lobbyId);
+            if (lobby) {
+                lobby.removePlayer(playerId);
+                if (lobby.getNumPlayers() <= 0) {
+                    lobby.getGame().setShouldEnd(true);
+                    this.#lobbies.delete(lobbyId);
+                    entityManager.deleteId(lobbyId);
+                }
+                else {
+                    data = {
+                        ...lobby.getLobbyData(),
+                    }
+                }
+                entityManager.deleteId(playerId);
             }
         }
+        return data;
     }
-
 }
 
 export const lobbyManager = new LobbyManager(entityManager);

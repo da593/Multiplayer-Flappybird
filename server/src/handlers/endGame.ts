@@ -1,13 +1,18 @@
 import { lobbyManager } from "#@/Managers/LobbyManager.js";
-import { EndGameData } from "@flappyblock/shared";
+import { EndGameData, WinState } from "@flappyblock/shared";
 
 export async function endGame(lobbyId: string): Promise<EndGameData> {
     const lobby = lobbyManager.getLobby(lobbyId);
-    const game = lobby.getGame();
-    const data: EndGameData = {
-        lobbyId: lobby.getEntityId(),
-        winner: game.getWinner(),
+    if (lobby) {
+        const game = lobby.getGame();
+        const data: EndGameData = {
+            lobbyId: lobby.getEntityId(),
+            winner: game.getWinner(),
+        }
+        return data;
     }
-    return data;
-    
+    return {
+        lobbyId: "NO_LOBBY_FOUND",
+        winner: WinState.NO_WINNER
+    }
 }

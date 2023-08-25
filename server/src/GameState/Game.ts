@@ -1,19 +1,24 @@
-import { GameData, GameState, INITIAL_STATE, WinState, game_tick } from "@flappyblock/shared";
+import { GameData, GameState, INITIAL_STATE, ReadyCheck, WinState, game_tick } from "@flappyblock/shared";
 import { Player } from "#@/entities/Player.js";
 
 export class Game {
 	players: Array<Player>;
 	state: Record<string, GameState>
 	deadPlayers: Set<string>;
-	winner: string;
+	lobbyCheck: Set<string>;
+	hasStarted: boolean;
 	shouldEnd: boolean;
+	winner: string;
+
 
 	constructor() {
 		this.players = new Array()
 		this.state = {};
 		this.deadPlayers = new Set();
-		this.winner = "none";
+		this.lobbyCheck = new Set();
+		this.hasStarted = false;
 		this.shouldEnd = false;
+		this.winner = "none";
 	}
 
  	getNumPlayers(): number {
@@ -26,6 +31,10 @@ export class Game {
 
 	getShouldEnd(): boolean {
 		return this.shouldEnd;
+	}
+
+	getHasStarted(): boolean {
+		return this.hasStarted;
 	}
 
 	getState(): Record<string, GameState> {
@@ -44,26 +53,49 @@ export class Game {
         this.players.splice(index,1);
 	}
 
-	startGame(): void {
-		this.restartGame();
-		this.updateGame();
-	}
-
-	restartGame(): void {
-		this.deadPlayers = new Set();
-		this.winner = "none";
-		this.shouldEnd = false;
+	resetState(): void {
 		this.players.forEach((player: Player) => {
 			player.resetState()
 		})
 	}
 
+	startGame(playerId: string): ReadyCheck {
+		this.lobbyCheck.add(playerId);
+		const readyCheck = {
+			numReady: this.lobbyCheck.size,
+		}
+		if (readyCheck.numReady === this.players.length) {
+			this.lobbyCheck = new Set();
+			this.hasStarted = true;
+			this.resetState();
+			this.updateGame();
+		}
+		return readyCheck;
+
+	}
+
+	restartGame(playerId: string): ReadyCheck {
+		this.lobbyCheck.add(playerId);
+		const readyCheck = {
+			numReady: this.lobbyCheck.size,
+		}
+		if (readyCheck.numReady ===  this.players.length) {
+			this.deadPlayers = new Set();
+			this.lobbyCheck = new Set();
+			this.hasStarted = false;
+			this.shouldEnd = false;
+			this.winner = "none";
+			this.resetState();
+		}
+		return readyCheck;
+	}
+
 	updateGame(): void {
 		const gameLoopId = setInterval(() => {
-			if (this.getNumPlayers() <= 0 || this.deadPlayers.size == this.players.length) {
+			if (this.getNumPlayers() <= 0 || this.deadPlayers.size === this.players.length) {
 				this.determineWinner();
-				this.shouldEnd = true;
 				clearInterval(gameLoopId);
+				this.shouldEnd = true;
 				console.log("clear game");
 			}
 			this.players.forEach((player: Player) => {
@@ -75,7 +107,7 @@ export class Game {
 				}
 			})
 			
-		}, game_tick)
+		}, game_tick);
 	}
 
 	playerInput(playerId: string): void {
@@ -100,6 +132,10 @@ export class Game {
 		else {
 			this.winner = WinState.NO_WINNER
 		}
+	}
+
+	setShouldEnd(bool: boolean) {
+		this.shouldEnd = bool;
 	}
 
 }

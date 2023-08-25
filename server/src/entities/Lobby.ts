@@ -1,4 +1,4 @@
-import { LobbyData } from "@flappyblock/shared";
+import { LobbyData, ReadyCheck } from "@flappyblock/shared";
 import { Game } from "#@/GameState/Game.js";
 import { Entity } from "./Entity.js";
 import { Player } from "./Player.js";
@@ -11,7 +11,7 @@ import { Pipe } from "./Pipe.js";
 export class Lobby extends Entity {
     players: Array<Player>;
     maxPlayers:number;
-    game:Game;
+    game: Game;
 
     constructor(id:string, maxPlayers:number) { 
         super(id);
@@ -40,7 +40,7 @@ export class Lobby extends Entity {
         return this.game;
     }
 
-    public startGame() {
+    public startGame(playerId: string): ReadyCheck {
         if (this.game.getNumPlayers() <= 0 || this.players.length <= 0) {
             throw ("No players to start game");
         }
@@ -48,7 +48,7 @@ export class Lobby extends Entity {
             throw ("Too many players to start game");
         }
         else {
-            this.game.startGame();
+            return this.game.startGame(playerId);
         }
     }
     
@@ -56,13 +56,18 @@ export class Lobby extends Entity {
         if (this.players.length >= this.maxPlayers) {
             throw("Lobby is full");
         }
-        const pipeId = entityManager.generateId();
-        const newPipe = new Pipe(pipeId);
-        const playerId = entityManager.generateId();
-        const newPlayer = new Player(playerId, newPipe);
-        this.players.push(newPlayer);
-        this.game?.addPlayer(newPlayer);
-        return playerId;
+        else if (this.game.hasStarted) {
+            return "NO_PLAYER"
+        }
+        else {
+            const pipeId = entityManager.generateId();
+            const newPipe = new Pipe(pipeId);
+            const playerId = entityManager.generateId();
+            const newPlayer = new Player(playerId, newPipe);
+            this.players.push(newPlayer);
+            this.game?.addPlayer(newPlayer);
+            return playerId;
+        }
     }
 
     public removePlayer(playerId:string):void {
