@@ -3,24 +3,20 @@
 import { useContext, useEffect, useState } from 'react';
 import { Events, LobbyResponse } from '@flappyblock/shared';
 import { SocketContext } from 'hooks/socketContext';
-import { useRouter } from 'next/navigation'
 import { GameManager } from './GameManager';
 import { selectLobby } from './lobbySlice'
 import { useSelector } from 'react-redux';
 import { CanvasContainer } from 'components/CanvasContainer';
 
 export default function Page({ params }: { params: { id: string } }) {
-  const router = useRouter();
   const socket = useContext(SocketContext);
   const lobbyData: LobbyResponse = useSelector(selectLobby);
   const [lobbyState, setLobbyState] = useState<LobbyResponse>(lobbyData);
   const self_id = lobbyData.playerId;
-
-
+  
   useEffect(() => {
-
     socket.on(Events.LobbyDataToAllClients, (data: LobbyResponse) => {
-        setLobbyState(data);
+      setLobbyState(data);
     })
 
     socket.on(Events.GetLatency, (cb: () => void) => {

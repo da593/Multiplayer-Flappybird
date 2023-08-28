@@ -20,7 +20,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     const [numReset, setNumReset] = useState<number>(0);
     const [winner, setWinner] = useState<string>(WinState.NO_WINNER);
 
-    function initStates(players: Array<string>):Record<string, GameState> {
+    function initStates(players: Array<string>): Record<string, GameState> {
         const states: Record<string, GameState> = {};
         players.forEach((id: string): void => {
             states[id] = INITIAL_STATE;
@@ -34,6 +34,18 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
 
     const handleStartGame = () => {
         socket.emit(Events.StartGame, {lobbyId: lobbyId, playerId: playerId_self});
+    }
+
+    const determineWinner = (): string => {
+        if (winner === WinState.DRAW) {
+            return "DRAW!"
+        }
+        else if (winner === playerId_self) {
+            return "YOU WON!"
+        }
+        else {
+            return "OPPONENT WON!"
+        }
     }
 
     useEffect(() => {
@@ -76,7 +88,6 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
 
         socket.on(Events.UpdateGame, (data) => {
             setStates(data.state);
-            console.log(data.state);
         });
 
         socket.on(Events.EndGame, (data) => {
@@ -86,6 +97,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
 
         return () => {
             socket.off(Events.StartGame);
+            socket.off(Events.ResetGame);
             socket.off(Events.UpdateGame);
             socket.off(Events.EndGame);
         }
@@ -105,7 +117,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
         )}
         {endGame ? 
             <NavigationMenu>
-                {players.length > 1 ? winner : null}
+                {players.length > 1 ?  <p>{determineWinner()}</p>: null}
                 {Object.entries(states).map(([id, state]) => {
                     return (
                         <h1 key={id}>{id === playerId_self ? "Your" : "Opponent"} Score: {state.player.score}</h1>
