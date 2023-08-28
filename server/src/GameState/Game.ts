@@ -2,8 +2,7 @@ import { GameData, GameState, INITIAL_STATE, ReadyCheck, WinState, game_tick } f
 import { Player } from "#@/entities/Player.js";
 
 export class Game {
-	players: Array<Player>;
-	state: Record<string, GameState>
+	players: Array<Player>
 	deadPlayers: Set<string>;
 	lobbyCheck: Set<string>;
 	hasStarted: boolean;
@@ -13,7 +12,6 @@ export class Game {
 
 	constructor() {
 		this.players = new Array()
-		this.state = {};
 		this.deadPlayers = new Set();
 		this.lobbyCheck = new Set();
 		this.hasStarted = false;
@@ -38,10 +36,11 @@ export class Game {
 	}
 
 	getState(): Record<string, GameState> {
+		const currentState: Record<string, GameState> = {};
 		this.players.forEach((player: Player) => {
-			this.state[player.getEntityId()] = {player: player.getPlayerState(), pipe: player.getPipeState() }
+			currentState[player.getEntityId()] = {player: player.getPlayerState(), pipe: player.getPipeState() }
 		})
-		return this.state;
+		return currentState;
 	}
 
 	addPlayer(newPlayer: Player): void {
@@ -96,7 +95,6 @@ export class Game {
 				this.determineWinner();
 				clearInterval(gameLoopId);
 				this.shouldEnd = true;
-				console.log("clear game");
 			}
 			this.players.forEach((player: Player) => {
 				if (player.getHasCollided()) {

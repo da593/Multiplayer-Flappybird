@@ -49,7 +49,6 @@ io.on("connection", (socket) => {
                 latency = Date.now() - latency;
                 if (latency > 5000 || !isConnected || shouldEnd) { 
                     clearInterval(id);
-                    console.log("clear ping"); 
                 }
             });
         }, ping_rate);   
@@ -87,7 +86,6 @@ io.on("connection", (socket) => {
             }
             if (!isConnected || shouldEnd) {
                 clearInterval(timerId);
-                console.log("clear start");
             }
             if (shouldEnd) {
                 endGame(lobbyId).then((data) => {
