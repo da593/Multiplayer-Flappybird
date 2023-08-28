@@ -78,6 +78,7 @@ io.on("connection", (socket) => {
         const {lobbyId} = args;
         const numReady = startGame(args);
         io.to(args.lobbyId).emit(Events.StartGame, numReady);
+
         const timerId = setInterval(() => {
             const lobby = lobbyManager.getLobby(lobbyId);
             const game = lobby?.getGame();
@@ -102,6 +103,7 @@ io.on("connection", (socket) => {
                 })
             }
         }, game_tick);
+
     });
 
     socket.on(Events.PlayerInput, (args: IdFields) => {
@@ -112,7 +114,7 @@ io.on("connection", (socket) => {
         leaveLobby(args).then((data) => {
             io.to(data.lobbyId).emit(Events.LobbyDataToAllClients, data);
             socket.leave(data.lobbyId);
-            isConnected = false;
+            shouldEnd = true;
         })
     });
 
