@@ -51,7 +51,6 @@ io.on("connection", (socket) => {
                     clearInterval(id);
                     console.log("clear ping"); 
                 }
-                console.log(latency);
             });
         }, ping_rate);   
     }
@@ -114,6 +113,7 @@ io.on("connection", (socket) => {
     socket.on(Events.LeaveLobby, (args: LeaveLobbyArgs) => {
         leaveLobby(args).then((data) => {
             io.to(data.lobbyId).emit(Events.LobbyDataToAllClients, data);
+            socket.leave(data.lobbyId);
             isConnected = false;
         })
     });
