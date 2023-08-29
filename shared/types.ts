@@ -108,6 +108,10 @@ export type CreateLobbyArgs = {
 export interface LobbyResponse extends LobbyData {
     playerId: string;
 }
+
+export interface ClientLobbyResponse extends LobbyResponse {
+    type: string;
+}
   
 export interface JoinLobbyArgs {
     lobbyId: string;

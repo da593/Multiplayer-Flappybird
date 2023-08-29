@@ -1,18 +1,21 @@
 import { RootState } from 'store'
-import { LobbyResponse } from '@flappyblock/shared'
+import { ClientLobbyResponse } from '@flappyblock/shared'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-const initialState: LobbyResponse = {
+
+
+const initialState: ClientLobbyResponse = {
     lobbyId: "0",
     players: [],
     playerId: "",
+    type: "NONE",
 }
 
 export const lobbySlice = createSlice({
   name: 'lobby',
   initialState,
   reducers: {
-    updateLobby: (state, {payload}: PayloadAction<LobbyResponse>) => {
+    updateLobby: (state, {payload}: PayloadAction<ClientLobbyResponse>) => {
       return payload;
     }
   }

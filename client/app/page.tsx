@@ -32,7 +32,7 @@ export default function HomePage() {
     const createLobby = async (maxPlayers: number) => {
         try {
             const response = await socket.emitWithAck(Events.CreateLobby, {maxPlayers: maxPlayers, socketId: socket.id});
-            dispatch(updateLobby(response));
+            dispatch(updateLobby({...response, type: maxPlayers > 1 ? "multiplayer" : "singleplayer"}));
             navigate(response.lobbyId);
         } 
         catch (e) {
@@ -44,7 +44,7 @@ export default function HomePage() {
         try {
             const lobbyId = lobbyText;
             const response = await socket.emitWithAck(Events.JoinLobby, {lobbyId: lobbyId, socketId: socket.id});
-            dispatch(updateLobby(response));
+            dispatch(updateLobby({...response, type: "multiplayer"}));
             navigate(response.lobbyId);
         } 
         catch (e) {
