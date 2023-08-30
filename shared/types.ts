@@ -28,7 +28,7 @@ export interface GameState {
     player: PlayerState_I
     pipe: PipeState_I
 }
-  
+
 export interface Dimensions_I {
     GAME_WIDTH: number,
     GAME_HEIGHT: number,
@@ -89,9 +89,14 @@ export interface IdFields {
     playerId: string;
 }
 
+export interface GameStateResponse {
+    players: Record<string, PlayerState_I>;
+    pipe: PipeState_I;
+}
+
 export interface GameData {
     lobbyId: string;
-    state: Record<string, GameState>;
+    state: GameStateResponse;
 }
   
 export interface LobbyData {
