@@ -1,6 +1,6 @@
 import  {useState,useEffect, useRef, useContext} from "react";
 import Link from 'next/link';
-import { Events, GameState, INITIAL_STATE, KEYBINDS, ReadyCheck, WinState, calculateNewBirdCoords, calculateNewGapCoords } from "@flappyblock/shared";
+import { BoxCoordinates, Events, GameState, INITIAL_STATE, KEYBINDS, PipeState_I, PlayerState_I, ReadyCheck, WinState, calculateNewBirdCoords, calculateNewGapCoords } from "@flappyblock/shared";
 import { SocketContext } from "hooks/socketContext";
 import { BoardGame } from "components/BoardGame";
 import { NavigationMenu } from "components/NavigationMenu";
@@ -13,19 +13,25 @@ interface Props {
 
 export function GameManager({lobbyId, playerId_self, players}:Props) {
     const socket = useContext(SocketContext);
-    const [states, setStates] = useState<Record<string,GameState>>(initStates(players)); 
+    const [pipeState, setPipeState] = useState<PipeState_I>(INITIAL_STATE.pipe);
+    const [playerStates, setPlayerStates] = useState<Record<string, PlayerState_I>>(initPlayerStates(players));
     const [startGame, setStartGame] = useState<boolean>(false);
     const [endGame, setEndGame] = useState<boolean>(false);
     const [numStart, setNumStart] = useState<number>(0);
     const [numReset, setNumReset] = useState<number>(0);
     const [winner, setWinner] = useState<string>(WinState.NO_WINNER);
 
-    function initStates(players: Array<string>): Record<string, GameState> {
-        const states: Record<string, GameState> = {};
+
+    function initPlayerStates(players: Array<string>): Record<string, PlayerState_I> {
+        const states: Record<string, PlayerState_I> = {};
         players.forEach((id: string): void => {
-            states[id] = INITIAL_STATE;
+            states[id] = INITIAL_STATE.player;
         })  
         return states;
+    }
+
+    const leaveLobby = () => {
+        socket.emit(Events.LeaveLobby, {socketId: socket.id});
     }
 
     const handleReset = () => {
@@ -55,18 +61,28 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             }
         }
 
+        const handleTouchEvent = (e: TouchEvent): void => {
+            socket.emit(Events.PlayerInput, {lobbyId: lobbyId, playerId: playerId_self});
+        }
+
         window.addEventListener("keydown", handleKeyBoardEvent);
+        window.addEventListener("touchstart", handleTouchEvent);
         return () => {
             window.removeEventListener("keydown", handleKeyBoardEvent);
+            window.removeEventListener("touchstart", handleTouchEvent);
 
         };
     },[lobbyId, playerId_self, socket])
 
     useEffect(() => {
         if (!startGame) {
-            setStates(initStates(players));
+            setPlayerStates(initPlayerStates(players));
+            setPipeState(INITIAL_STATE.pipe);
         }
-    },[players, startGame]);
+        setNumReset(0);
+        setNumStart(0);
+        console.log(players.length);
+    },[players, startGame, players.length]);
 
     useEffect(() => {
         socket.on(Events.StartGame, ({numReady}: ReadyCheck) => {
@@ -87,7 +103,9 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
         });
 
         socket.on(Events.UpdateGame, (data) => {
-            setStates(data.state);
+            setPlayerStates(data.state.players);
+            setPipeState(data.state.pipe);
+
         });
 
         socket.on(Events.EndGame, (data) => {
@@ -105,22 +123,18 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
 
     return (
         <>
-        {Object.entries(states).map(([id, state]) =>
-            <BoardGame
-                key={id}
-                id={id}
-                playerId_self={playerId_self}
-                player={state.player}
-                pipe={state.pipe}
-                hasStarted={startGame}
-            />
-        )}
+        <BoardGame
+            playerId_self={playerId_self}
+            players={playerStates}
+            pipe={pipeState}
+            hasStarted={startGame}
+        />
         {endGame ? 
             <NavigationMenu>
                 {players.length > 1 ?  <p>{determineWinner()}</p>: null}
-                {Object.entries(states).map(([id, state]) => {
+                {Object.entries(playerStates).map(([id, playerState]) => {
                     return (
-                        <h1 key={id}>{id === playerId_self ? "Your" : "Opponent"} Score: {state.player.score}</h1>
+                        <h1 key={id}>{id === playerId_self ? "Your" : "Opponent"} Score: {playerState.score}</h1>
                     )
                 })}
                 <li><button onClick={handleReset}>
@@ -129,7 +143,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
                         players.length > 1 ? <p>{numReset + " / " + players.length}</p> : null
                     }
                 </button></li>
-                <li><Link href="/">Main Menu</Link></li>
+                <li><Link href="/" onClick={() => leaveLobby()}>Main Menu</Link></li>
             </NavigationMenu> : 
         !startGame ? 
             <NavigationMenu>

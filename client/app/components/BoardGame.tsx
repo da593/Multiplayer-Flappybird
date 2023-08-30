@@ -1,5 +1,5 @@
 
-import { GAME_DIMENSIONS, GameState } from '@flappyblock/shared';
+import { GAME_DIMENSIONS, GameState, GameStateResponse } from '@flappyblock/shared';
 import { BoardBackground } from './background';
 import { Scoreboard } from './Scoreboard';
 import { Pipe } from './Pipe';
@@ -8,21 +8,27 @@ import { DimensionContext } from 'hooks/DimensionsContext';
 
 
 
-interface Props extends GameState {
+interface Props extends GameStateResponse {
     playerId_self: string;
-    id: string;
     hasStarted: boolean;
-
 }
 
-export function BoardGame({id, playerId_self, player, pipe, hasStarted}: Props)  {
-    const isSelf = playerId_self === id;
+export function BoardGame({playerId_self, players, pipe, hasStarted}: Props)  {
+
     return (
-        <div className={player.hasCollided || !hasStarted ? "gameboard opaque" : "gameboard"}>
+        <div className={(players[playerId_self] && players[playerId_self].hasCollided) || !hasStarted ? "gameboard opaque" : "gameboard"}>
             <DimensionContext.Provider value={GAME_DIMENSIONS}>
-                <Scoreboard isSelf={isSelf} score={player.score}/>
+                {Object.entries(players).map(([id, playerState]) => {
+                        return (
+                            <Scoreboard key={id} isSelf={playerId_self === id} score={playerState.score}/>
+                        )
+                })}
                 <Pipe gapCoords={pipe.gapCoords}/>
-                <Bird  isSelf={isSelf} birdCoords={player.birdCoords}/>
+                {Object.entries(players).map(([id, playerState]) => {
+                        return (
+                            <Bird key={id} isSelf={playerId_self === id} birdCoords={playerState.birdCoords}/>
+                        )
+                })}
                 <BoardBackground/> 
             </DimensionContext.Provider>
         </div>
