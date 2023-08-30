@@ -17,7 +17,9 @@ export class Lobby extends Entity {
         super(id);
         this.maxPlayers = maxPlayers;
         this.players = new Array();
-        this.game = new Game();
+        const pipeId = entityManager.generateId();
+        const pipe = new Pipe(pipeId);
+        this.game = new Game(pipe);
     }
 
     public getNumPlayers(): number {
@@ -60,10 +62,8 @@ export class Lobby extends Entity {
             return "NO_PLAYER"
         }
         else {
-            const pipeId = entityManager.generateId();
-            const newPipe = new Pipe(pipeId);
             const playerId = entityManager.generateId();
-            const newPlayer = new Player(playerId, newPipe);
+            const newPlayer = new Player(playerId);
             this.players.push(newPlayer);
             this.game?.addPlayer(newPlayer);
             return playerId;

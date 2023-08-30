@@ -10,5 +10,4 @@ export abstract class Entity {
         return this.#id;
     }   
 
-
 }

@@ -16,6 +16,10 @@ export class Pipe extends Entity {
     getState(): PipeState_I {
         return {gapCoords: this.position};
     }
+
+    getPipeCoords(): BoxCoordinates {
+        return this.position;
+    }
     
     resetState(): void {
         this.position = INITIAL_STATE.pipe.gapCoords;

@@ -1,20 +1,16 @@
 import { BoxCoordinates, GAME_DIMENSIONS, INITIAL_STATE, PipeState_I, PlayerState_I, calculateBirdCoords, calculateNewBirdCoords, detectCollision } from "@flappyblock/shared";
 import { Entity } from "./Entity.js";
-import { Pipe } from "./Pipe.js";
-
 
 export class Player extends Entity {
     birdCoords: BoxCoordinates;
     score: number;
     hasCollided: boolean;
-    pipe: Pipe;
     
-    constructor(id:string, pipe: Pipe) {
+    constructor(id: string) {
         super(id);
         this.birdCoords = INITIAL_STATE.player.birdCoords;
         this.score = INITIAL_STATE.player.score;
         this.hasCollided = INITIAL_STATE.player.hasCollided;
-        this.pipe = pipe;
     }
 
     getPlayerState(): PlayerState_I {
@@ -26,8 +22,8 @@ export class Player extends Entity {
         };
     }
 
-    getPipeState(): PipeState_I {
-        return this.pipe.getState();
+    getBirdCoords(): BoxCoordinates {
+        return this.birdCoords;
     }
 
     getHasCollided(): boolean {
@@ -38,28 +34,26 @@ export class Player extends Entity {
         return this.score;
     }
 
+    setHasCollided(bool: boolean): void {
+        this.hasCollided = bool;
+    }
+
+    addScore(): void {
+        this.score++;
+    }
+
     update(): void {
-        const currPipeCoords = this.getPipeState().gapCoords;
         const currBirdCoords = this.birdCoords;
-        this.hasCollided = detectCollision(this.birdCoords, currPipeCoords);
-        this.addScore(currBirdCoords, currPipeCoords);
         this.birdCoords = calculateNewBirdCoords(currBirdCoords);
-        this.pipe.update();
     }
     
     resetState(): void {
         this.birdCoords = INITIAL_STATE.player.birdCoords;
         this.score = INITIAL_STATE.player.score;
         this.hasCollided = INITIAL_STATE.player.hasCollided;
-        this.pipe.resetState();
     }
 
-    addScore(birdCoords: BoxCoordinates, pipeCoords: BoxCoordinates): void {
-        if (birdCoords.topLeft.x === pipeCoords.topRight.x + 1) {
-            this.score++;
-        }
-    }
-    
+
     userInput() {
         if (this.birdCoords.topLeft.y > 0 && !this.hasCollided) {
             const newBirdCoords =  calculateBirdCoords(this.birdCoords.topLeft.y - GAME_DIMENSIONS.Y_FLY_UP);

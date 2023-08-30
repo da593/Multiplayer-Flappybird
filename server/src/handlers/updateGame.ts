@@ -10,6 +10,16 @@ export async function updateGame(lobbyId: string): Promise<GameData> {
     }
     return {
         lobbyId: "NO_LOBBY_FOUND",
-        state: {}
+        state: {
+            players: {},
+            pipe: {gapCoords: 
+                {    
+                    topLeft: {x: 0, y: 0},
+                    topRight: {x: 0, y: 0},
+                    botLeft: {x: 0, y: 0},
+                    botRight: {x: 0, y: 0},
+                }
+            },
+        },
     }
 }
