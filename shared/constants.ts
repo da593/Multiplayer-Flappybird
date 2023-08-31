@@ -35,3 +35,8 @@ export enum WinState {
     SELF_WIN = "YOU WIN",
     OPPONENT_WIN = "OPPONENT WINS",
 }
+
+export enum ERROR {
+    LOBBY_NOT_FOUND = "LOBBY_NOT_FOUND",
+    NO_PLAYER = "NO_PLAYER",
+}
