@@ -1,19 +1,18 @@
 import { lobbyManager } from "#@/Managers/LobbyManager.js";
-import { Ack, JoinLobbyArgs, LobbyResponse } from "@flappyblock/shared";
+import { Ack, ERROR, JoinLobbyArgs, LobbyResponse } from "@flappyblock/shared";
 
 export async function joinLobby(args: JoinLobbyArgs, cb: Ack<LobbyResponse>): Promise<LobbyResponse> {
     const lobby = lobbyManager.getLobby(args.lobbyId);
+    let data: LobbyResponse = {
+        lobbyId: ERROR.LOBBY_NOT_FOUND,
+        players: [],
+        playerId: ERROR.NO_PLAYER
+    }
     if (lobby && !lobby.getGame().hasStarted) {
         const playerId = lobby.addPlayer();
         lobbyManager.addSocket(args.socketId, playerId, lobby.getEntityId());
-        const data: LobbyResponse = {...lobby.getLobbyData(), playerId: playerId};
-        cb(data);
-        return data;
+        data = {...lobby.getLobbyData(), playerId: playerId};
     }
-    return {
-        lobbyId: "NO_LOBBY_FOUND",
-        players: [],
-        playerId: "NO_PLAYER"
-    }
-    
+    cb(data);
+    return data;
 }

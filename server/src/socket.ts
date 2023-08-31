@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Ack, ClientToServerEvents, CreateLobbyArgs, LobbyResponse, Events, IdFields, JoinLobbyArgs, LeaveLobbyArgs, ServerToClientEvents, StartGameArgs, game_tick, ping_rate } from '@flappyblock/shared';
+import { Ack, ClientToServerEvents, CreateLobbyArgs, LobbyResponse, Events, IdFields, JoinLobbyArgs, LeaveLobbyArgs, ServerToClientEvents, StartGameArgs, game_tick, ping_rate, ERROR } from '@flappyblock/shared';
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { clearInterval } from 'timers';
@@ -42,17 +42,19 @@ io.on("connection", (socket) => {
         removeSocket(socket.id);
     })
 
-    const getPing = (): void => {
-        const id = setInterval(() => {
-            let latency = Date.now();
-            io.emit(Events.GetLatency, () => {
-                latency = Date.now() - latency;
-                if (latency > 5000 || !isConnected || shouldEnd) { 
-                    clearInterval(id);
-                }
-            });
-        }, ping_rate);   
-    }
+    // const startPing = (): void => {
+    //     const getPing = (): number => {
+    //         let latency = Date.now();
+    //         io.emit(Events.GetLatency, () => {
+    //             latency = Date.now() - latency;
+    //         });
+    //         return latency;
+    //     }
+    //     let latency = getPing();
+    //     const id = setInterval(() => {
+    //         latency= getPing()
+    //     }, ping_rate);   
+    // }
 
     socket.on(Events.CreateLobby, (args: CreateLobbyArgs, cb: Ack<LobbyResponse>) => {
         createLobby(args, cb).then((data) => {
@@ -60,18 +62,17 @@ io.on("connection", (socket) => {
         }).catch(e => {
             console.log(e);
         });
-        getPing();
     })
 
     socket.on(Events.JoinLobby, (args: JoinLobbyArgs, cb: Ack<LobbyResponse>) => {
         joinLobby(args, cb).then((data) => {
-            joinRooms(data,socket);
-            io.to(data.lobbyId).emit(Events.LobbyDataToAllClients, data);
+            if (data.lobbyId !== ERROR.LOBBY_NOT_FOUND) {
+                joinRooms(data,socket);
+                io.to(data.lobbyId).emit(Events.LobbyDataToAllClients, data);
+            }
         }).catch(e => {
             console.log(e);
         });
-            
-        getPing();
     })
 
     socket.on(Events.StartGame, (args: StartGameArgs) => {
