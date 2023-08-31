@@ -1,6 +1,7 @@
 "use client"
 
 import { useContext, useEffect, useState } from 'react';
+import { notFound  } from 'next/navigation';
 import { Events, LobbyResponse, ClientLobbyResponse } from '@flappyblock/shared';
 import { SocketContext } from 'hooks/socketContext';
 import { GameManager } from './GameManager';
@@ -12,7 +13,20 @@ export default function Page({ params }: { params: { id: string } }) {
   const socket = useContext(SocketContext);
   const lobbyData: ClientLobbyResponse = useSelector(selectLobby);
   const [lobbyState, setLobbyState] = useState<LobbyResponse>({...lobbyData});
+  const [hasCopied, setHasCopied] = useState<boolean>(false);
   const self_id = lobbyData.playerId;
+
+  if (lobbyState.players.length <= 0) {
+    throw (notFound());
+  };
+
+  const copyLobbyId = () => {
+    navigator.clipboard.writeText(params.id);
+    setHasCopied(true);
+    setTimeout(() => {
+      setHasCopied(false);
+    }, 5000)
+  }
 
   useEffect(() => {
     socket.on(Events.LobbyDataToAllClients, (data: LobbyResponse) => {
@@ -31,7 +45,15 @@ export default function Page({ params }: { params: { id: string } }) {
 
   return (
     <>
-      {lobbyData.type === "multiplayer" ? <p>Lobby Id: {params.id}</p> : null}
+      {lobbyData.type === "multiplayer" ? 
+      <div className='canvas-container'>
+        <p>Lobby Id: {params.id}</p> 
+        <button 
+          className="interactive"
+          onClick={() => copyLobbyId()}>
+            {hasCopied ? "Copied!" : "Copy Id"}
+        </button>
+      </div> : null}
       <CanvasContainer>
         <GameManager
           lobbyId={params.id}

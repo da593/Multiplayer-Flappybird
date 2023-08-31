@@ -81,7 +81,6 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
         }
         setNumReset(0);
         setNumStart(0);
-        console.log(players.length);
     },[players, startGame, players.length]);
 
     useEffect(() => {

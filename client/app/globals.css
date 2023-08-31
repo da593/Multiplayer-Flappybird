@@ -42,6 +42,10 @@ li {
   list-style-type: none;
 }
 
+input {
+  border: 1px solid black;
+}
+
 button {
   all: unset;
   cursor: pointer;
@@ -115,13 +119,17 @@ button {
 .popup {
   display: block;
   z-index: 4;
-  position: absolute;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50%;
   color: black;
   background-color: orange;
   border: solid black 3px; 
-  margin: 1rem 0rem;
+  margin: 0rem 0rem;
   padding: 0.5rem 0.5rem;
-  width: 30%;
+  width: 50%;
 }
 
 .popup > li > label {
@@ -140,3 +148,11 @@ button {
   padding: 0.5rem 0.5rem;
   font-size: 1.5rem;
 }
+
+.interactive {
+  float: right;
+  background-color: #c5c9d1;
+  color: black;
+  padding: 0.2rem 0.5rem;
+}
+
