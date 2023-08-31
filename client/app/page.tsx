@@ -20,6 +20,7 @@ export default function HomePage() {
     const lobbyData = useSelector(selectLobby);
     const gapCoords = useGapCoords(dimensions);
     const [isOpened,setIsOpened] = useState(false);
+    const [openInstructions, setOpenInstructions] = useState(false);
     const [failedLobby, setFailedLobby] = useState(false);
     const [lobbyText,setLobbyText] = useState("");
     const router = useRouter()
@@ -63,12 +64,17 @@ export default function HomePage() {
 
     return (
         <>
-        <div className="popup" style={isOpened ? {display: "block"} : {display: "none"}}>
+        <div className="popup" style={isOpened && !openInstructions ? {display: "block"} : {display: "none"}}>
                 <button className="interactive" onClick={() => setIsOpened(false)}>X</button>
                 <li><label>Enter Lobby Id</label></li>
                 <li><input onChange={(e) => setLobbyText(e.target.value)} placeholder="Enter lobby Id..."/></li>
                 <li><p style={{color: "red", fontSize:"x-large", display: failedLobby ? "block" : "none"}}>Lobby Not Found!</p></li>
                 <li><button onClick={() => joinLobbyQueryRequest()}>Submit</button></li>
+        </div>
+        <div className="popup" style={openInstructions && !isOpened ? {display: "block"} : {display: "none"}}>
+                <button className="interactive" onClick={() => setOpenInstructions(false)}>X</button>
+                <li><label>How To Play</label></li>
+                <li><p>The goal is to avoid the obstacles by navigating your block through gaps and to go as far you can! Press &#87; or &#8593; to move your block up!</p></li>
         </div>
         <CanvasContainer>
             <DimensionContext.Provider value={dimensions}>
@@ -77,9 +83,10 @@ export default function HomePage() {
                 <BoardBackground/>
             </DimensionContext.Provider>
             <NavigationMenu>
+                <li> <button onClick={() => !isOpened ? setOpenInstructions(true) : null}> How To Play </button> </li>
                 <li> <button onClick={() => createLobby(1)}> Singleplayer </button> </li>
                 <li> <button onClick={() => createLobby(2)}> Create Lobby </button> </li>
-                <li> <button onClick={() => setIsOpened(true)}> Join Lobby </button> </li>
+                <li> <button onClick={() => !openInstructions ? setIsOpened(true) : null}> Join Lobby </button> </li>
             </NavigationMenu>
         </CanvasContainer>
         </>
