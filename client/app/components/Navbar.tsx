@@ -21,9 +21,6 @@ export function Navbar() {
                     <li>
                         <Link href="/" onClick={() => leaveLobby()}>FlappyBlock</Link>
                     </li>
-                    <li>
-                        <Link href="/" onClick={() => leaveLobby()}>Main Menu</Link>
-                    </li>
                 </div>
             </ul>
             

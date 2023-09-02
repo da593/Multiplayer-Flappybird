@@ -7,6 +7,14 @@ nav {
     margin-bottom: 3%;
 }
 
+@media (max-width: 760px) {
+    nav {
+        margin-bottom: 0%;
+    }
+}
+
+
+
 .menu {
     display: flex;
     flex-wrap: wrap;

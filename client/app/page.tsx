@@ -74,7 +74,7 @@ export default function HomePage() {
         <div className="popup" style={openInstructions && !isOpened ? {display: "block"} : {display: "none"}}>
                 <button className="interactive" onClick={() => setOpenInstructions(false)}>X</button>
                 <li><label>How To Play</label></li>
-                <li><p>The goal is to avoid the obstacles by navigating your block through gaps and to go as far you can! Press &#87; or &#8593; to move your block up!</p></li>
+                <li><p>The goal is to go as far you can by navigating through gaps between obstacles! Press touch-screen, left-mouse-button, &#87;, or  &#8593; to move your block up!</p></li>
         </div>
         <CanvasContainer>
             <DimensionContext.Provider value={dimensions}>

@@ -30,6 +30,8 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  height: 100%;
+  width: 100%;
 }
 
 
