@@ -47,11 +47,10 @@ export default function Page({ params }: { params: { id: string } }) {
     <>
       {lobbyData.type === "multiplayer" ? 
       <div className='canvas-container'>
-        <p>Lobby Id: {params.id}</p> 
         <button 
           className="interactive"
           onClick={() => copyLobbyId()}>
-            {hasCopied ? "Copied!" : "Copy Id"}
+            {hasCopied ? "Copied!" : "Copy Lobby Id"}
         </button>
       </div> : null}
       <CanvasContainer>

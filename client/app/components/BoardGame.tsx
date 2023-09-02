@@ -18,11 +18,13 @@ export function BoardGame({playerId_self, players, pipe, hasStarted}: Props)  {
     return (
         <div className={(players[playerId_self] && players[playerId_self].hasCollided) || !hasStarted ? "gameboard opaque" : "gameboard"}>
             <DimensionContext.Provider value={GAME_DIMENSIONS}>
-                {Object.entries(players).map(([id, playerState]) => {
-                        return (
-                            <Scoreboard key={id} isSelf={playerId_self === id} score={playerState.score}/>
-                        )
-                })}
+                <div className='scoreboard'>
+                    {Object.entries(players).map(([id, playerState]) => {
+                            return (
+                                <Scoreboard key={id} isSelf={playerId_self === id} score={playerState.score}/>
+                            )
+                    })}
+                </div>
                 <Pipe gapCoords={pipe.gapCoords}/>
                 {Object.entries(players).map(([id, playerState]) => {
                         return (

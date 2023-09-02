@@ -84,6 +84,11 @@ button {
   color: black;
 }
 
+.scoreboard {
+  display: flex;
+  justify-content: space-between;
+}
+
 .score {
   display: inline-block;
   z-index: 1;
@@ -95,6 +100,13 @@ button {
 
 #background-layer {
   z-index: -1;
+  width: 480px;
+  aspect-ratio: 3 / 4;
+}
+
+.canvas-item {
+  width: 480px;
+  aspect-ratio: 3 / 4;
 }
 
 .opaque {
@@ -158,3 +170,13 @@ button {
   padding: 0.2rem 0.5rem;
 }
 
+@media (max-width: 480px) {
+  #background-layer {
+    width: 100%;
+  }
+  
+  .canvas-item {
+    width: 100%;
+  }
+  
+}

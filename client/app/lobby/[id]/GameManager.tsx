@@ -56,13 +56,15 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
 
     useEffect(() => {
         const handleKeyBoardEvent = (e:KeyboardEvent): void => {
-            if (KEYBINDS.find((str: string) => str === e.key)) {
+            if (KEYBINDS.find((str: string) => str === e.key) && startGame) {
                 socket.emit(Events.PlayerInput, {lobbyId: lobbyId, playerId: playerId_self});
             }
         }
 
         const handleTouchEvent = (e: TouchEvent): void => {
-            socket.emit(Events.PlayerInput, {lobbyId: lobbyId, playerId: playerId_self});
+            if (startGame) {
+                socket.emit(Events.PlayerInput, {lobbyId: lobbyId, playerId: playerId_self});
+            }
         }
 
         window.addEventListener("keydown", handleKeyBoardEvent);
@@ -72,7 +74,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             window.removeEventListener("touchstart", handleTouchEvent);
 
         };
-    },[lobbyId, playerId_self, socket])
+    },[lobbyId, playerId_self, startGame, socket])
 
     useEffect(() => {
         if (!startGame) {

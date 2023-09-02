@@ -33,6 +33,6 @@ export function Bird({isSelf, birdCoords}:Props) {
     },[birdCoords, dimensions, isSelf])
 
     return (
-        <canvas className={isSelf ? "canvas-item" : "canvas-item"} width={dimensions ? dimensions.GAME_WIDTH : undefined} height={dimensions ? dimensions.GAME_HEIGHT : undefined} ref={canvasRef}/>
+        <canvas className={"canvas-item"} width={dimensions ? dimensions.GAME_WIDTH : undefined} height={dimensions ? dimensions.GAME_HEIGHT : undefined} ref={canvasRef}/>
     )
 }
