@@ -52,6 +52,7 @@ export default function Page({ params }: { params: { id: string } }) {
           onClick={() => copyLobbyId()}>
             {hasCopied ? "Copied!" : "Copy Lobby Id"}
         </button>
+        <p>{params.id}</p>
       </div> : null}
       <CanvasContainer>
         <GameManager

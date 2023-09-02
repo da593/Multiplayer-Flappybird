@@ -154,6 +154,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
                         players.length > 1 ? <p>{numStart + " / " + players.length}</p> : null
                     }
                 </button> </li>
+                <li><Link href="/" onClick={() => leaveLobby()}>Main Menu</Link></li>
             </NavigationMenu> : null
         }
         </>
