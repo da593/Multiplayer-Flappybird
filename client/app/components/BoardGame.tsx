@@ -28,7 +28,7 @@ export function BoardGame({playerId_self, players, pipe, hasStarted}: Props)  {
                 <Pipe gapCoords={pipe.gapCoords}/>
                 {Object.entries(players).map(([id, playerState]) => {
                         return (
-                            <Bird key={id} isSelf={playerId_self === id} birdCoords={playerState.birdCoords}/>
+                            <Bird key={id} isSelf={playerId_self === id} birdCoords={playerState.birdCoords} hasCollided={playerState.hasCollided}/>
                         )
                 })}
                 <BoardBackground/> 
