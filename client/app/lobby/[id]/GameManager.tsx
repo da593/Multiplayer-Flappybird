@@ -1,6 +1,6 @@
-import  {useState,useEffect, useRef, useContext} from "react";
+import  {useState,useEffect, useContext} from "react";
 import Link from 'next/link';
-import { BoxCoordinates, Events, GameState, INITIAL_STATE, KEYBINDS, PipeState_I, PlayerState_I, ReadyCheck, WinState, calculateNewBirdCoords, calculateNewGapCoords } from "@flappyblock/shared";
+import { BoxCoordinates, Coordinates, Events, GAME_DIMENSIONS, GameStateResponse, INITIAL_STATE, KEYBINDS, PipeState_I, PlayerState_I, ReadyCheck, WinState, calculateNewGapCoords } from "@flappyblock/shared";
 import { SocketContext } from "hooks/socketContext";
 import { BoardGame } from "components/BoardGame";
 import { NavigationMenu } from "components/NavigationMenu";
@@ -20,7 +20,6 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     const [numStart, setNumStart] = useState<number>(0);
     const [numReset, setNumReset] = useState<number>(0);
     const [winner, setWinner] = useState<string>(WinState.NO_WINNER);
-
 
     function initPlayerStates(players: Array<string>): Record<string, PlayerState_I> {
         const states: Record<string, PlayerState_I> = {};
@@ -80,9 +79,9 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
         if (!startGame) {
             setPlayerStates(initPlayerStates(players));
             setPipeState(INITIAL_STATE.pipe);
+            setNumReset(0);
+            setNumStart(0);
         }
-        setNumReset(0);
-        setNumStart(0);
     },[players, startGame, players.length]);
 
     useEffect(() => {
@@ -106,13 +105,13 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
         socket.on(Events.UpdateGame, (data) => {
             setPlayerStates(data.state.players);
             setPipeState(data.state.pipe);
-
         });
 
         socket.on(Events.EndGame, (data) => {
             setEndGame(true);
             setWinner(data.winner);
         });
+
 
         return () => {
             socket.off(Events.StartGame);

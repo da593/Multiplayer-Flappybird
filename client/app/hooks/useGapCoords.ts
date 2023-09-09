@@ -1,19 +1,19 @@
 'use client';
-import { BoxCoordinates, Dimensions_I } from '@flappyblock/shared';
-import { calculateGapCoords, calculateNewGapCoords, randomizeYGapLocation } from '@flappyblock/shared/';
+import { BoxCoordinates, GAME_DIMENSIONS, calculateNewGapCoords } from '@flappyblock/shared';
+import { calculateGapCoords, randomizeYGapLocation } from '@flappyblock/shared/';
 import {useEffect, useState} from 'react';
 
 
-export function useGapCoords(dimensions: Dimensions_I) {
-    const init_value = calculateGapCoords(dimensions.GAME_WIDTH, randomizeYGapLocation());
+export function useGapCoords() {
+    const init_value = calculateGapCoords(GAME_DIMENSIONS.GAME_WIDTH, randomizeYGapLocation());
     const [gapCoords,setGapCoords] = useState<BoxCoordinates>(init_value);
+
     useEffect(() => {
         let raf:number;
+        const PIPE_VELOCITY = 1;
 
         const render = () => {
-
-            setGapCoords(prevGapCoords => calculateNewGapCoords(prevGapCoords));
-    
+            setGapCoords(prevGapCoords => calculateNewGapCoords(prevGapCoords, PIPE_VELOCITY));
             raf = window.requestAnimationFrame(render);
         }
         render();

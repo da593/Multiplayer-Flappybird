@@ -1,40 +1,42 @@
-import {useContext, useEffect, useRef} from 'react';
-import { DimensionContext } from 'hooks/DimensionsContext';
-import { BoxCoordinates } from '@flappyblock/shared';
+import { useEffect, useRef, useState } from 'react';
+import { BoxCoordinates, GAME_DIMENSIONS, calculateNewGapCoords, game_tick } from '@flappyblock/shared';
 
 interface Props {
-    gapCoords: BoxCoordinates
+    gapCoords: BoxCoordinates;
+    hasStarted: boolean;
 }
-export function Pipe({gapCoords}: Props) {
+export function Pipe({gapCoords, hasStarted}: Props) {
   
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
-    const dimensions = useContext(DimensionContext);
-    
-    useEffect(() => {
+    const canvas = canvasRef.current;
+    let context: CanvasRenderingContext2D | null = null;
+    if (canvas) {
+        context = canvas.getContext("2d");
+    }
 
-        const draw = (canvas:HTMLCanvasElement,context:CanvasRenderingContext2D) => {
-            context.clearRect(0, 0, context.canvas.width, context.canvas.height)
-            if (dimensions) {
+    useEffect(() => {
+        const draw = (gapCoords: BoxCoordinates) => {
+            if (context && canvas) {
+                context.clearRect(0, 0, context.canvas.width, context.canvas.height)
                 context.fillStyle = "green";
-                context.fillRect(gapCoords.topLeft.x, 0, dimensions.PIPE_WIDTH, gapCoords.topLeft.y);
-                context.fillRect(gapCoords.topLeft.x, gapCoords.botLeft.y, dimensions.PIPE_WIDTH, canvas.height)
+                context.fillRect(gapCoords.topLeft.x, 0, GAME_DIMENSIONS.PIPE_WIDTH, gapCoords.topLeft.y);
+                context.fillRect(gapCoords.topLeft.x, gapCoords.botLeft.y, GAME_DIMENSIONS.PIPE_WIDTH, canvas.height)
         
                 context.fillStyle= "#87CEEB"; 
-                context.fillRect(gapCoords.topLeft.x, gapCoords.topLeft.y , dimensions.PIPE_WIDTH, dimensions.GAP_HEIGHT);
+                context.fillRect(gapCoords.topLeft.x, gapCoords.topLeft.y , GAME_DIMENSIONS.PIPE_WIDTH, GAME_DIMENSIONS.GAP_HEIGHT);
             }
         }
 
-        const canvas = canvasRef.current;
-        if (canvas ) {
-            const context = canvas.getContext("2d");
-            if (context) {
-                draw(canvas,context);
-            }
+        if (context) {
+            draw(gapCoords);
         }
-    },[gapCoords, dimensions])
+        
+    },[gapCoords, hasStarted, canvas, context])
+
+
 
 
     return (
-        <canvas className="canvas-item" width={dimensions ? dimensions.GAME_WIDTH : undefined} height={dimensions ? dimensions.GAME_HEIGHT : undefined} ref={canvasRef} />
+        <canvas className="canvas-item" width={GAME_DIMENSIONS.GAME_WIDTH}  height={GAME_DIMENSIONS.GAME_HEIGHT} ref={canvasRef} />
     )
 }

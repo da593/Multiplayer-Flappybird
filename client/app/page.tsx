@@ -2,7 +2,6 @@
 
 import  { useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { DimensionContext } from 'hooks/DimensionsContext';
 import { useGapCoords } from "hooks/useGapCoords";
 import { ERROR, Events, GAME_DIMENSIONS, INITIAL_STATE } from '@flappyblock/shared';
 import { SocketContext } from 'hooks/socketContext';
@@ -16,9 +15,8 @@ import { CanvasContainer } from 'components/CanvasContainer';
 
 export default function HomePage() {
     const socket = useContext(SocketContext);
-    const dimensions = GAME_DIMENSIONS;
     const lobbyData = useSelector(selectLobby);
-    const gapCoords = useGapCoords(dimensions);
+    const gapCoords = useGapCoords();
     const [isOpened,setIsOpened] = useState(false);
     const [openInstructions, setOpenInstructions] = useState(false);
     const [failedLobby, setFailedLobby] = useState(false);
@@ -77,11 +75,9 @@ export default function HomePage() {
                 <li><p>The goal is to go as far you can by navigating through gaps between obstacles! Press touch-screen, left-mouse-button, &#87;, or  &#8593; to move your block up!</p></li>
         </div>
         <CanvasContainer>
-            <DimensionContext.Provider value={dimensions}>
-                <Pipe gapCoords={gapCoords}/>
-                <Bird isSelf={true} birdCoords={INITIAL_STATE.player.birdCoords}/>
+                <Pipe gapCoords={gapCoords} hasStarted={false}/>
+                <Bird isSelf={true} birdCoords={INITIAL_STATE.player.birdCoords} hasCollided={false} hasStarted={false}/>
                 <BoardBackground/>
-            </DimensionContext.Provider>
             <NavigationMenu>
                 <li> <button onClick={() => !isOpened ? setOpenInstructions(true) : null}> How To Play </button> </li>
                 <li> <button onClick={() => createLobby(1)}> Singleplayer </button> </li>
