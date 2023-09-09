@@ -75,8 +75,8 @@ export default function HomePage() {
                 <li><p>The goal is to go as far you can by navigating through gaps between obstacles! Press touch-screen, left-mouse-button, &#87;, or  &#8593; to move your block up!</p></li>
         </div>
         <CanvasContainer>
-                <Pipe gapCoords={gapCoords} hasStarted={false}/>
-                <Bird isSelf={true} birdCoords={INITIAL_STATE.player.birdCoords} hasCollided={false} hasStarted={false}/>
+                <Pipe gapCoords={gapCoords}/>
+                <Bird isSelf={true} birdCoords={INITIAL_STATE.player.birdCoords} hasCollided={false}/>
                 <BoardBackground/>
             <NavigationMenu>
                 <li> <button onClick={() => !isOpened ? setOpenInstructions(true) : null}> How To Play </button> </li>

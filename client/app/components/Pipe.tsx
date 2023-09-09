@@ -3,9 +3,8 @@ import { BoxCoordinates, GAME_DIMENSIONS, calculateNewGapCoords, game_tick } fro
 
 interface Props {
     gapCoords: BoxCoordinates;
-    hasStarted: boolean;
 }
-export function Pipe({gapCoords, hasStarted}: Props) {
+export function Pipe({gapCoords}: Props) {
   
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const canvas = canvasRef.current;
@@ -31,7 +30,7 @@ export function Pipe({gapCoords, hasStarted}: Props) {
             draw(gapCoords);
         }
         
-    },[gapCoords, hasStarted, canvas, context])
+    },[gapCoords, canvas, context])
 
 
 

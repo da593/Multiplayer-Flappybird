@@ -22,10 +22,10 @@ export function BoardGame({playerId_self, players, pipe, hasStarted}: Props)  {
                             )
                     })}
                 </div>
-                <Pipe gapCoords={pipe.gapCoords} hasStarted={hasStarted}/>
+                <Pipe gapCoords={pipe.gapCoords}/>
                 {Object.entries(players).map(([id, playerState]) => {
                         return (
-                            <Bird key={id} isSelf={playerId_self === id} birdCoords={playerState.birdCoords} hasCollided={playerState.hasCollided} hasStarted={hasStarted}/>
+                            <Bird key={id} isSelf={playerId_self === id} birdCoords={playerState.birdCoords} hasCollided={playerState.hasCollided}/>
                         )
                 })}
                 <BoardBackground/> 

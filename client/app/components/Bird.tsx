@@ -5,10 +5,9 @@ interface Props {
     birdCoords: BoxCoordinates;
     isSelf: boolean;
     hasCollided: boolean;
-    hasStarted: boolean;
 }
 
-export function Bird({isSelf, birdCoords, hasCollided, hasStarted}:Props) {
+export function Bird({isSelf, birdCoords, hasCollided}:Props) {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
     const canvas = canvasRef.current;
@@ -39,7 +38,7 @@ export function Bird({isSelf, birdCoords, hasCollided, hasStarted}:Props) {
             draw(context, birdCoords);
         }
 
-    },[birdCoords, isSelf, hasStarted, hasCollided, canvas, context])
+    },[birdCoords, isSelf, hasCollided, canvas, context])
 
     return (
         <canvas className={"canvas-item"} width={GAME_DIMENSIONS.GAME_WIDTH} height={GAME_DIMENSIONS.GAME_HEIGHT} ref={canvasRef}/>
