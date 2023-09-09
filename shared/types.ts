@@ -34,10 +34,11 @@ export interface Dimensions_I {
     GAME_HEIGHT: number,
     PIPE_WIDTH: number,
     GAP_HEIGHT: number,
-    PIPE_VELOCITY: number,
     BIRD_WIDTH: number,
     BIRD_X_LOCATION: number,
     Y_FLY_UP: number,
+    PIPE_VELOCITY: number,
+    BIRD_GRAVITY: number,
 }
 
 

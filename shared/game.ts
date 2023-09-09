@@ -25,7 +25,7 @@ export const calculateBirdCoords = (yBirdLoc: number): BoxCoordinates => {
     return {topLeft:birdTopLeft,topRight: birdTopRight, botLeft: birdBotLeft, botRight: birdBotRight}
 }
 
-export const calculateNewGapCoords = (prevGapCoords: BoxCoordinates): BoxCoordinates => {
+export function calculateNewGapCoords(prevGapCoords: BoxCoordinates, velocity: number = GAME_DIMENSIONS.PIPE_VELOCITY): BoxCoordinates {
     let xPipeLoc:number = prevGapCoords.topLeft.x;
     let yGapLoc: number = prevGapCoords.topLeft.y;
     if (xPipeLoc <= -GAME_DIMENSIONS.PIPE_WIDTH) {
@@ -33,15 +33,15 @@ export const calculateNewGapCoords = (prevGapCoords: BoxCoordinates): BoxCoordin
         xPipeLoc = GAME_DIMENSIONS.GAME_WIDTH;
     }
     else {
-        xPipeLoc = prevGapCoords.topLeft.x - 1;
+        xPipeLoc = prevGapCoords.topLeft.x - velocity;
     }
     
     return calculateGapCoords(xPipeLoc,yGapLoc);
 }
 
-export const calculateNewBirdCoords = (prevGapCoords: BoxCoordinates) => {
+export function calculateNewBirdCoords(prevGapCoords: BoxCoordinates, gravity: number = GAME_DIMENSIONS.BIRD_GRAVITY): BoxCoordinates {
     let yBirdLoc = prevGapCoords.topLeft.y;
-    yBirdLoc = yBirdLoc + 1;
+    yBirdLoc = yBirdLoc + gravity;
     return calculateBirdCoords(yBirdLoc);
 }
 
