@@ -1,4 +1,4 @@
-import { BoxCoordinates, GameStateResponse, PlayerState_I, ReadyCheck, WinState, detectCollision, game_tick } from "@flappyblock/shared";
+import { BoxCoordinates, GAME_DIMENSIONS, GameStateResponse, PlayerState_I, ReadyCheck, WinState, detectCollision, game_tick } from "@flappyblock/shared";
 import { Player } from "#@/entities/Player.js";
 import { Pipe } from "#@/entities/Pipe.js";
 
@@ -153,7 +153,7 @@ export class Game {
 	}
 
 	addScore(birdCoords: BoxCoordinates, pipeCoords: BoxCoordinates): boolean {
-        if (birdCoords.topLeft.x === pipeCoords.topRight.x + 1) {
+        if (birdCoords.topLeft.x === pipeCoords.topRight.x + GAME_DIMENSIONS.PIPE_VELOCITY) {
             return true;
         }
 		return false;
