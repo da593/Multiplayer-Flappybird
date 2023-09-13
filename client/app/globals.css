@@ -143,7 +143,6 @@ button {
   border: solid black 3px; 
   margin: 0rem 0rem;
   padding: 0.5rem 0.5rem;
-  width: 50%;
 }
 
 .popup > li > label {
@@ -179,4 +178,10 @@ button {
     width: 100%;
   }
   
+}
+
+@media (max-width: 780px) {
+  .popup {
+    width: 100%;
+  }
 }
