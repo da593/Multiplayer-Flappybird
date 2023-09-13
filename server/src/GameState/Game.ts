@@ -104,23 +104,20 @@ export class Game {
 				clearInterval(gameLoopId);
 				this.shouldEnd = true;
 			}
-			this.pipe.update();
-			this.players.forEach((player: Player) => {
-				if (player.getHasCollided()) {
-					this.deadPlayers.add(player.getEntityId());
-				}
-				else {
+			else {
+				this.pipe.update();
+				this.players.forEach((player: Player) => {
 					player.update();
 					const currBirdCoords = player.getBirdCoords();
 					const currPipeCoords = this.pipe.getPipeCoords();
-					player.setHasCollided(detectCollision(currBirdCoords, currPipeCoords));
+					const hasCollided = detectCollision(currBirdCoords, currPipeCoords)
+					player.setHasCollided(hasCollided);
+					hasCollided ? this.deadPlayers.add(player.getEntityId()) : null;
 					if (this.addScore(currBirdCoords, currPipeCoords)) {
 						player.addScore();
 					}
-					
-				}
-			})
-			
+				})
+			}
 		}, game_tick);
 	}
 

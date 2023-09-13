@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Ack, ClientToServerEvents, CreateLobbyArgs, LobbyResponse, Events, IdFields, JoinLobbyArgs, LeaveLobbyArgs, ServerToClientEvents, StartGameArgs, game_tick, ping_rate, ERROR } from '@flappyblock/shared';
+import { Ack, ClientToServerEvents, CreateLobbyArgs, LobbyResponse, Events, IdFields, JoinLobbyArgs, LeaveLobbyArgs, ServerToClientEvents, StartGameArgs, game_tick, ping_rate, ERROR, GameData } from '@flappyblock/shared';
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { clearInterval } from 'timers';
@@ -42,20 +42,6 @@ io.on("connection", (socket) => {
         removeSocket(socket.id);
     })
 
-    // const startPing = (): void => {
-    //     const getPing = (): number => {
-    //         let latency = Date.now();
-    //         io.emit(Events.GetLatency, () => {
-    //             latency = Date.now() - latency;
-    //         });
-    //         return latency;
-    //     }
-    //     let latency = getPing();
-    //     const id = setInterval(() => {
-    //         latency= getPing()
-    //     }, ping_rate);   
-    // }
-
     socket.on(Events.CreateLobby, (args: CreateLobbyArgs, cb: Ack<LobbyResponse>) => {
         createLobby(args, cb).then((data) => {
             joinRooms(data,socket);
@@ -80,14 +66,13 @@ io.on("connection", (socket) => {
         const numReady = startGame(args);
         io.to(args.lobbyId).emit(Events.StartGame, numReady);
 
-        const timerId = setInterval(() => {
+        const emitGameState = (lobbyId: string) => {
             const lobby = lobbyManager.getLobby(lobbyId);
             const game = lobby?.getGame();
+            let hasStarted = false;
             if (game) {
                 shouldEnd = game.shouldEnd;
-            }
-            if (!isConnected || shouldEnd) {
-                clearInterval(timerId);
+                hasStarted = game.getHasStarted();
             }
             if (shouldEnd) {
                 endGame(lobbyId).then((data) => {
@@ -96,13 +81,21 @@ io.on("connection", (socket) => {
                     console.log(e);
                 })
             }
-            else {
-                updateGame(lobbyId).then((data) => {
-                    io.to(lobbyId).volatile.emit(Events.UpdateGame, data);
+            else if (hasStarted) {
+                updateGame(lobbyId).then((data: GameData) => {
+                    io.to(socket.id).volatile.emit(Events.UpdateGame, data);
                 }).catch(e => {
                     console.log(e);
                 })
             }
+        }
+
+        emitGameState(lobbyId);
+        const timerId = setInterval(() => {
+            if (!isConnected || shouldEnd) {
+                clearInterval(timerId);
+            }
+            emitGameState(lobbyId);
         }, game_tick);
 
     });
