@@ -107,14 +107,18 @@ export class Game {
 			else {
 				this.pipe.update();
 				this.players.forEach((player: Player) => {
-					player.update();
 					const currBirdCoords = player.getBirdCoords();
 					const currPipeCoords = this.pipe.getPipeCoords();
 					const hasCollided = detectCollision(currBirdCoords, currPipeCoords)
-					player.setHasCollided(hasCollided);
-					hasCollided ? this.deadPlayers.add(player.getEntityId()) : null;
-					if (this.addScore(currBirdCoords, currPipeCoords)) {
-						player.addScore();
+					if (player.getHasCollided() || hasCollided) {
+						this.deadPlayers.add(player.getEntityId());
+						player.setHasCollided(true);
+					}
+					else {
+						player.update();
+						if (this.addScore(currBirdCoords, currPipeCoords)) {
+							player.addScore();
+						}
 					}
 				})
 			}
