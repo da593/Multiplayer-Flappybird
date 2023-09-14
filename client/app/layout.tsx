@@ -3,8 +3,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
 import { Navbar } from 'components/Navbar'
-import { BodyContainer } from 'components/BodyContainer'
 import { ReduxProvider } from 'components/ReduxProvider'
+import { DivContainer } from './components/DivContainer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,9 +23,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <Navbar/>
         <ReduxProvider>
-          <BodyContainer>
+          <DivContainer className={"body-container"}>
             {children}
-          </BodyContainer>
+          </DivContainer>
         </ReduxProvider>
       </body>
     </html>

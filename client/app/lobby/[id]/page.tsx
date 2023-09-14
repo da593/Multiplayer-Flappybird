@@ -7,7 +7,7 @@ import { SocketContext } from 'hooks/socketContext';
 import { GameManager } from './GameManager';
 import { selectLobby } from './lobbySlice'
 import { useSelector } from 'react-redux';
-import { CanvasContainer } from 'components/CanvasContainer';
+import { DivContainer } from '@/components/DivContainer';
 
 export default function Page({ params }: { params: { id: string } }) {
   const socket = useContext(SocketContext);
@@ -54,13 +54,13 @@ export default function Page({ params }: { params: { id: string } }) {
         </button>
         <p>{params.id}</p>
       </div> : null}
-      <CanvasContainer>
+      <DivContainer className="canvas-container">
         <GameManager
           lobbyId={params.id}
           playerId_self={self_id}
           players = {lobbyState.players} 
         />
-      </CanvasContainer>
+      </DivContainer>
     </>
   )
 }

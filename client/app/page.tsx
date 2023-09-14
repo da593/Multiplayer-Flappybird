@@ -1,28 +1,31 @@
 'use client';
 
 import  { useContext, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useGapCoords } from "hooks/useGapCoords";
-import { ERROR, Events, GAME_DIMENSIONS, INITIAL_STATE } from '@flappyblock/shared';
+import { ERROR, Events, INITIAL_STATE } from '@flappyblock/shared';
 import { SocketContext } from 'hooks/socketContext';
 import { Pipe } from 'components/Pipe';
 import { Bird } from './components/Bird';
 import { BoardBackground } from 'components/background';
 import { NavigationMenu } from 'components/NavigationMenu';
 import { useRouter, notFound  } from 'next/navigation';
-import { selectLobby, updateLobby } from '@/lobby/[id]/lobbySlice';
-import { CanvasContainer } from 'components/CanvasContainer';
+import { updateLobby } from '@/lobby/[id]/lobbySlice';
+import { LobbyAlert } from './components/LobbyAlert';
+import { DivContainer } from './components/DivContainer';
 
 export default function HomePage() {
     const socket = useContext(SocketContext);
-    const lobbyData = useSelector(selectLobby);
     const gapCoords = useGapCoords();
     const [isOpened,setIsOpened] = useState(false);
     const [openInstructions, setOpenInstructions] = useState(false);
-    const [failedLobby, setFailedLobby] = useState(false);
+    const [hasFoundLobby, setHasFoundLobby] = useState(false);
+    const [displayLobbyAlert, setDisplayLobbyAlert] = useState(false);
     const [lobbyText,setLobbyText] = useState("");
-    const router = useRouter()
-    const dispatch = useDispatch()
+    const router = useRouter();
+    const dispatch = useDispatch();
+
+
 
     const navigate = (lobbyId: string) => {
         const endpoint: string = "lobby/" + lobbyId;
@@ -45,15 +48,17 @@ export default function HomePage() {
             const lobbyId = lobbyText;
             const response = await socket.emitWithAck(Events.JoinLobby, {lobbyId: lobbyId, socketId: socket.id});
             if (response.lobbyId === ERROR.LOBBY_NOT_FOUND) {
-                setFailedLobby(true);
-                setTimeout(() => {
-                    setFailedLobby(false);
-                }, 5000)
+                setHasFoundLobby(false);
             }
             else {
+                setHasFoundLobby(true);
                 dispatch(updateLobby({...response, type: "multiplayer"}));
                 navigate(response.lobbyId);
             }
+            setDisplayLobbyAlert(true)
+            setTimeout(() => {
+                setDisplayLobbyAlert(false);
+            }, 5000)
         } 
         catch (e) {
             throw (notFound);
@@ -62,19 +67,34 @@ export default function HomePage() {
 
     return (
         <>
-        <div className="popup" style={isOpened && !openInstructions ? {display: "block"} : {display: "none"}}>
-                <button className="interactive" onClick={() => setIsOpened(false)}>X</button>
+        {isOpened && !openInstructions ? <DivContainer className="popup">
+            <button className="interactive" onClick={() => setIsOpened(false)}>
+                    X
+                </button>
                 <li><label>Enter Lobby Id</label></li>
                 <li><input onChange={(e) => setLobbyText(e.target.value)} placeholder="Enter lobby Id..."/></li>
-                <li><p style={{color: "red", fontSize:"x-large", display: failedLobby ? "block" : "none"}}>Lobby Not Found!</p></li>
-                <li><button onClick={() => joinLobbyQueryRequest()}>Submit</button></li>
-        </div>
-        <div className="popup" style={openInstructions && !isOpened ? {display: "block"} : {display: "none"}}>
-                <button className="interactive" onClick={() => setOpenInstructions(false)}>X</button>
+                {displayLobbyAlert ? <LobbyAlert isSuccess={hasFoundLobby}/> : null}
+                <li>
+                    <button onClick={() => joinLobbyQueryRequest()}>
+                    Submit
+                    </button>
+                </li>
+        </DivContainer> : null}
+
+        {!isOpened && openInstructions ? <DivContainer className="popup">
+            <button className="interactive" onClick={() => setOpenInstructions(false)}>
+                    X
+                </button>
                 <li><label>How To Play</label></li>
-                <li><p>The goal is to go as far you can by navigating through gaps between obstacles! Press touch-screen, left-mouse-button, &#87;, or  &#8593; to move your block up!</p></li>
-        </div>
-        <CanvasContainer>
+                <li>
+                    <p>
+                        The goal is to go as far you can by navigating through gaps between obstacles! 
+                        Press touch-screen, left-mouse-button, &#87;, or  &#8593; to move your block up!
+                    </p>
+                </li>
+        </DivContainer>: null}
+        
+        <DivContainer className="canvas-container">
                 <Pipe gapCoords={gapCoords}/>
                 <Bird isSelf={true} birdCoords={INITIAL_STATE.player.birdCoords} hasCollided={false}/>
                 <BoardBackground/>
@@ -84,7 +104,7 @@ export default function HomePage() {
                 <li> <button onClick={() => createLobby(2)}> Create Lobby </button> </li>
                 <li> <button onClick={() => !openInstructions ? setIsOpened(true) : null}> Join Lobby </button> </li>
             </NavigationMenu>
-        </CanvasContainer>
+        </DivContainer>
         </>
     )
 }

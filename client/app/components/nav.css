@@ -25,5 +25,6 @@ nav {
 .flex-left {
     display: flex;
     align-items: left;
-    gap: 2em;
+    gap: 1em;
 }
+

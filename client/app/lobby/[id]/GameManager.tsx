@@ -1,6 +1,6 @@
 import  {useState,useEffect, useContext, useRef} from "react";
 import Link from 'next/link';
-import { BoxCoordinates, Events, GAME_DIMENSIONS, GameStateResponse, INITIAL_STATE, KEYBINDS, PipeState_I, PlayerState_I, ReadyCheck, WinState, calculateNewGapCoords, game_tick } from "@flappyblock/shared";
+import { BoxCoordinates, EndGameData, Events, GAME_DIMENSIONS, GameData, GameStateResponse, INITIAL_STATE, KEYBINDS, PipeState_I, PlayerState_I, ReadyCheck, WinState, calculateNewGapCoords, game_tick } from "@flappyblock/shared";
 import { SocketContext } from "hooks/socketContext";
 import { BoardGame } from "components/BoardGame";
 import { NavigationMenu } from "components/NavigationMenu";
@@ -110,7 +110,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             }
         });
 
-        socket.on(Events.UpdateGame, (data) => {
+        socket.on(Events.UpdateGame, (data: GameData) => {
             snapshots.current.push(data.state);
             if (snapshots.current.length >= 4) {
                 const snapshot: GameStateResponse | undefined =snapshots.current.shift();
@@ -122,7 +122,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             }
         });
 
-        socket.on(Events.EndGame, (data) => {
+        socket.on(Events.EndGame, (data: EndGameData) => {
             const id = setInterval(() => {
                 const snapshot: GameStateResponse | undefined =snapshots.current.shift();
                 if (snapshot) {
