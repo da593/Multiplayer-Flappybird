@@ -169,6 +169,10 @@ button {
   padding: 0.2rem 0.5rem;
 }
 
+.sprite {
+  display: none;
+}
+
 @media (max-width: 480px) {
   #background-layer {
     width: 100%;
