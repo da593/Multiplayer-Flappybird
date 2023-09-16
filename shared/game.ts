@@ -2,8 +2,8 @@ import { GAME_DIMENSIONS } from "./constants";
 import { BoxCoordinates, Coordinates } from "./types";
 
 export const detectCollision = (birdCoords:BoxCoordinates, gapCoords:BoxCoordinates): boolean => {
-    return birdCoords.botLeft.y >= GAME_DIMENSIONS.GAME_HEIGHT ||
-    birdCoords.topRight.x >= gapCoords.topLeft.x && birdCoords.topLeft.x <= gapCoords.topRight.x && (
+    return birdCoords.botLeft.y >= GAME_DIMENSIONS.GAME_HEIGHT || 
+    birdCoords.topRight.x >= gapCoords.topLeft.x + 1 && birdCoords.topLeft.x <= gapCoords.topRight.x && ( //Pipe skinny part is 1px shorter than top
     birdCoords.topLeft.y <= gapCoords.topLeft.y ||
     birdCoords.botLeft.y >= gapCoords.botLeft.y)
     
