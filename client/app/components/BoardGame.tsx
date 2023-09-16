@@ -1,9 +1,9 @@
-
 import { GameStateResponse } from '@flappyblock/shared';
 import { BoardBackground } from './background';
 import { Scoreboard } from './Scoreboard';
 import { Pipe } from './Pipe';
 import { Bird } from './Bird';
+
 
 
 interface Props extends GameStateResponse {
@@ -24,9 +24,9 @@ export function BoardGame({playerId_self, players, pipe, hasStarted}: Props)  {
                 </div>
                 <Pipe gapCoords={pipe.gapCoords}/>
                 {Object.entries(players).map(([id, playerState]) => {
-                        return (
-                            <Bird key={id} isSelf={playerId_self === id} birdCoords={playerState.birdCoords} hasCollided={playerState.hasCollided}/>
-                        )
+                    return (
+                        <Bird key={id} isSelf={playerId_self === id} birdCoords={playerState.birdCoords} hasCollided={playerState.hasCollided}/>
+                    )
                 })}
                 <BoardBackground/> 
         </div>

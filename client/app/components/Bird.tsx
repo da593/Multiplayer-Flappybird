@@ -9,12 +9,9 @@ interface Props {
 
 export function Bird({isSelf, birdCoords, hasCollided}:Props) {
 
-    const canvasRef = useRef<HTMLCanvasElement | null>(null)
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const canvas = canvasRef.current;
-    let context: CanvasRenderingContext2D | null = null;
-    if (canvas) {
-        context = canvas.getContext("2d");
-    }
+    const context = canvas?.getContext("2d");
 
     useEffect(() => {
         

@@ -4,7 +4,7 @@ import { calculateGapCoords, randomizeYGapLocation } from '@flappyblock/shared/'
 import {useEffect, useState} from 'react';
 
 
-export function useGapCoords() {
+export function useRAFCoords() {
     const init_value = calculateGapCoords(GAME_DIMENSIONS.GAME_WIDTH, randomizeYGapLocation());
     const [gapCoords,setGapCoords] = useState<BoxCoordinates>(init_value);
 

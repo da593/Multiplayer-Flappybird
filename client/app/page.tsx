@@ -1,22 +1,21 @@
 'use client';
 
-import  { useContext, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useGapCoords } from "hooks/useGapCoords";
-import { ERROR, Events, INITIAL_STATE } from '@flappyblock/shared';
-import { SocketContext } from 'hooks/socketContext';
-import { Pipe } from 'components/Pipe';
-import { Bird } from './components/Bird';
-import { BoardBackground } from 'components/background';
-import { NavigationMenu } from 'components/NavigationMenu';
-import { useRouter, notFound  } from 'next/navigation';
 import { updateLobby } from '@/lobby/[id]/lobbySlice';
-import { LobbyAlert } from './components/LobbyAlert';
+import { ERROR, Events, INITIAL_STATE } from '@flappyblock/shared';
+import { NavigationMenu } from 'components/NavigationMenu';
+import { BoardBackground } from 'components/background';
+import { SocketContext } from 'hooks/socketContext';
+import { notFound, useRouter } from 'next/navigation';
+import { useContext, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Bird } from './components/Bird';
 import { DivContainer } from './components/DivContainer';
+import { LobbyAlert } from './components/LobbyAlert';
+import { Pipe } from './components/Pipe';
+import { useRAFCoords } from './hooks/useRAFCoords';
 
 export default function HomePage() {
     const socket = useContext(SocketContext);
-    const gapCoords = useGapCoords();
     const [isOpened,setIsOpened] = useState(false);
     const [openInstructions, setOpenInstructions] = useState(false);
     const [hasFoundLobby, setHasFoundLobby] = useState(false);
@@ -24,9 +23,8 @@ export default function HomePage() {
     const [lobbyText,setLobbyText] = useState("");
     const router = useRouter();
     const dispatch = useDispatch();
-
-
-
+    const gapCoords = useRAFCoords();
+    
     const navigate = (lobbyId: string) => {
         const endpoint: string = "lobby/" + lobbyId;
         router.push(endpoint);
