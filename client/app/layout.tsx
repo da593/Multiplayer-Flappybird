@@ -1,10 +1,11 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-
 import { Navbar } from 'components/Navbar'
 import { ReduxProvider } from 'components/ReduxProvider'
 import { DivContainer } from './components/DivContainer'
+import { SocketProvider } from './hooks/socketContext'
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,12 +22,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+      <SocketProvider>
         <Navbar/>
         <ReduxProvider>
           <DivContainer className={"body-container"}>
             {children}
           </DivContainer>
         </ReduxProvider>
+      </SocketProvider>
       </body>
     </html>
   )

@@ -1,5 +1,6 @@
 'use client';
 
+import { ChildrenProps } from "@/components/types";
 import { ServerToClientEvents, ClientToServerEvents } from "@flappyblock/shared";
 import {createContext} from "react";
 import io, { Socket } from "socket.io-client";
@@ -15,3 +16,11 @@ function getApi(): string {
 const baseUrl: string = getApi();
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(baseUrl);
 export const SocketContext = createContext(socket);
+
+export function SocketProvider({children}: ChildrenProps) {
+    return (
+        <SocketContext.Provider value={socket}>
+            {children}
+        </SocketContext.Provider>
+    )
+}
