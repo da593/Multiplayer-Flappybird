@@ -11,7 +11,7 @@ export const GAME_DIMENSIONS:Dimensions_I = {
     BIRD_X_LOCATION: 50,
     Y_FLY_UP: 45,
     PIPE_VELOCITY: 5,
-    BIRD_GRAVITY: 5,
+    BIRD_GRAVITY: 7,
 };
 
 export const INITIAL_STATE: GameState =  {
