@@ -1,6 +1,6 @@
 import  {useState,useEffect, useContext, useRef} from "react";
 import Link from 'next/link';
-import { BoxCoordinates, EndGameData, Events, GAME_DIMENSIONS, GameData, GameStateResponse, INITIAL_STATE, KEYBINDS, PipeState_I, PlayerState_I, ReadyCheck, WinState, calculateNewGapCoords, game_tick } from "@flappyblock/shared";
+import { BoxCoordinates, EndGameData, Events, GAME_DIMENSIONS, GameData, GameStateResponse, INITIAL_STATE, KEYBINDS, PipeState_I, PlayerState_I, ReadyCheck, WinState, calculateNewBirdCoords, calculateNewGapCoords, game_tick } from "@flappyblock/shared";
 import { SocketContext } from "hooks/socketContext";
 import { BoardGame } from "components/BoardGame";
 import { NavigationMenu } from "components/NavigationMenu";
@@ -64,7 +64,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             }
         }
 
-        const handleTouchEvent = (e: TouchEvent): void => {
+        const handleTouchEvent = (): void => {
             if (startGame) {
                 socket.emit(Events.PlayerInput, {lobbyId: lobbyId, playerId: playerId_self});
             }
@@ -146,7 +146,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             socket.off(Events.UpdateGame);
             socket.off(Events.EndGame);
         }
-    }, [socket, players, numStart, numReset]);
+    }, [socket, players, numStart, numReset, playerId_self]);
 
 
     useEffect(() => {
@@ -157,39 +157,68 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     }, [snapshotsLength, startGame]);
 
     useEffect(() => {
-        let raf: number = 0;
-        const PIPE_VELOCITY = 0.5;
+        let gapId: number = 0;
+        let birdId: number = 0;
+        const INTERPOLATE_VELOCITY: number = 0.5;
 
         const interpolatePipe = (gapCoords: BoxCoordinates, maxGapCoords: BoxCoordinates, accumulator: number): void => {
             const start = performance.now();
-            const newGapCoords: BoxCoordinates = calculateNewGapCoords(gapCoords, PIPE_VELOCITY)  
+            const newGapCoords: BoxCoordinates = calculateNewGapCoords(gapCoords, INTERPOLATE_VELOCITY)  
             const accumulated = performance.now() - start + accumulator;
             if (accumulated < game_tick  && newGapCoords.topLeft.x > maxGapCoords.topLeft.x) {
                 setPipeState({
                     gapCoords: newGapCoords
                 });
-                raf = window.requestAnimationFrame(() => interpolatePipe(newGapCoords, maxGapCoords, accumulated));
+                gapId = window.requestAnimationFrame(() => interpolatePipe(newGapCoords, maxGapCoords, accumulated));
+            }
+        }
+
+        const interpolateBird = (birdCoords: BoxCoordinates, maxBirdCoords: BoxCoordinates, accumulator: number): void => {
+            const start = performance.now();
+            const newBirdCoords: BoxCoordinates = calculateNewBirdCoords(birdCoords, INTERPOLATE_VELOCITY);
+            const accumulated = performance.now() - start + accumulator;
+            if (accumulated < game_tick && newBirdCoords.topLeft.y < maxBirdCoords.topLeft.y) {
+                const newState: Record<string, PlayerState_I> = {
+                    ...playerStates,
+                    [playerId_self]: {
+                        ...playerStates[playerId_self],
+                        birdCoords: newBirdCoords,
+                    }
+                }
+                setPlayerStates(newState);
+                birdId = window.requestAnimationFrame(() => interpolateBird(newBirdCoords, maxBirdCoords, accumulated));
             }
         }
 
         if (!endGame && snapshot && startGame) {
             const snapshotGapCoords = snapshot.pipe.gapCoords;
-            const maxGapCoords: BoxCoordinates = calculateNewGapCoords(snapshotGapCoords, GAME_DIMENSIONS.PIPE_VELOCITY);
-    
+            const maxGapCoords: BoxCoordinates = calculateNewGapCoords(snapshotGapCoords);
+ 
+
             if (snapshotGapCoords.topRight.x > 0) {
-                window.cancelAnimationFrame(raf);
+                window.cancelAnimationFrame(gapId);
                 interpolatePipe(snapshotGapCoords, maxGapCoords, 0);
             }
+
+            const snapshotPlayerCoords = snapshot.players[playerId_self].birdCoords;
+            const maxBirdCoords: BoxCoordinates = calculateNewBirdCoords(snapshotPlayerCoords);
+            if (snapshotPlayerCoords.topLeft.y > 0) {
+                window.cancelAnimationFrame(birdId);
+                interpolateBird(snapshotPlayerCoords, maxBirdCoords, 0);
+            }
+
         }
         else {
-            window.cancelAnimationFrame(raf);
+            window.cancelAnimationFrame(gapId);
+            window.cancelAnimationFrame(birdId);
         }
 
         return () => {
-            window.cancelAnimationFrame(raf);
+            window.cancelAnimationFrame(gapId);
+            window.cancelAnimationFrame(birdId);
         }
 
-    }, [snapshot, endGame, startGame]);
+    }, [snapshot, endGame, startGame, playerId_self]);
 
     return (
         <>

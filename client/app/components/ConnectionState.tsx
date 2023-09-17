@@ -11,17 +11,15 @@ export function ConnectionState() {
 
     const connected = "Connected!"
     const disconnected = "Try refreshing the page. Not connected to a socket!"
-    const [toolTipTitle, setToolTipTitle] = useState(socket.connected ? connected : disconnected)
+    const toolTipTitle = isConnected ? connected : disconnected
 
     useEffect(() => {
         function onConnect() {
           setIsConnected(true);
-          setToolTipTitle(connected);
         }
     
         function onDisconnect() {
           setIsConnected(false);
-          setToolTipTitle(disconnected);
         }
     
         socket.on('connect', onConnect);
@@ -32,6 +30,10 @@ export function ConnectionState() {
           socket.off('disconnect', onDisconnect);
         };
       }, [socket, isConnected]);
+
+      useEffect(() => {
+        setIsConnected(socket.connected);
+      },[socket.connected])
 
 
     return (
