@@ -1,16 +1,18 @@
-import { BoxCoordinates, GAME_DIMENSIONS, INITIAL_STATE, PipeState_I, PlayerState_I, calculateBirdCoords, calculateNewBirdCoords, detectCollision } from "@flappyblock/shared";
+import { BoxCoordinates, GAME_DIMENSIONS, INITIAL_STATE, PipeState_I, PlayerState_I, calculateBirdCoords, calculateNewBirdCoords, detectCollision, game_tick } from "@flappyblock/shared";
 import { Entity } from "./Entity.js";
 
 export class Player extends Entity {
     birdCoords: BoxCoordinates;
     score: number;
     hasCollided: boolean;
+    speed: number;
     
     constructor(id: string) {
         super(id);
         this.birdCoords = INITIAL_STATE.player.birdCoords;
         this.score = INITIAL_STATE.player.score;
         this.hasCollided = INITIAL_STATE.player.hasCollided;
+        this.speed = 0;
     }
 
     getPlayerState(): PlayerState_I {
@@ -44,19 +46,22 @@ export class Player extends Entity {
 
     update(): void {
         const currBirdCoords = this.birdCoords;
-        this.birdCoords = calculateNewBirdCoords(currBirdCoords);
+        this.speed += GAME_DIMENSIONS.BIRD_VELOCITY;
+        this.birdCoords = calculateNewBirdCoords(currBirdCoords, this.speed);
     }
     
     resetState(): void {
         this.birdCoords = INITIAL_STATE.player.birdCoords;
         this.score = INITIAL_STATE.player.score;
         this.hasCollided = INITIAL_STATE.player.hasCollided;
+        this.speed = 0;
     }
 
 
     userInput() {
         if (this.birdCoords.topLeft.y > 0 && !this.hasCollided) {
-            const newBirdCoords =  calculateBirdCoords(this.birdCoords.topLeft.y - GAME_DIMENSIONS.Y_FLY_UP);
+            this.speed = -GAME_DIMENSIONS.Y_FLY_UP;
+            const newBirdCoords =  calculateNewBirdCoords(this.birdCoords, this.speed);
             this.birdCoords = newBirdCoords;
         }
     }
