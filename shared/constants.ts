@@ -7,16 +7,16 @@ export const GAME_DIMENSIONS:Dimensions_I = {
     GAME_HEIGHT: 640,
     PIPE_WIDTH: 80,
     GAP_HEIGHT: 120,
-    BIRD_WIDTH: 50,
+    PIPE_VELOCITY: 10,
+    BIRD_WIDTH: 40,
     BIRD_X_LOCATION: 50,
-    Y_FLY_UP: 45,
-    PIPE_VELOCITY: 5,
-    BIRD_GRAVITY: 7,
+    Y_FLY_UP: 15,
+    BIRD_VELOCITY: 3,
 };
 
 export const INITIAL_STATE: GameState =  {
     player: {
-        birdCoords: calculateBirdCoords(GAME_DIMENSIONS.GAP_HEIGHT / 3 ),
+        birdCoords: calculateBirdCoords(GAME_DIMENSIONS.GAME_HEIGHT / 2 ),
         score: 0,
         hasCollided: false,
     },

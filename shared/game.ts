@@ -39,7 +39,7 @@ export function calculateNewGapCoords(prevGapCoords: BoxCoordinates, velocity: n
     return calculateGapCoords(xPipeLoc,yGapLoc);
 }
 
-export function calculateNewBirdCoords(prevGapCoords: BoxCoordinates, gravity: number = GAME_DIMENSIONS.BIRD_GRAVITY): BoxCoordinates {
+export function calculateNewBirdCoords(prevGapCoords: BoxCoordinates, gravity: number = GAME_DIMENSIONS.BIRD_VELOCITY): BoxCoordinates {
     let yBirdLoc = prevGapCoords.topLeft.y;
     yBirdLoc = yBirdLoc + gravity;
     return calculateBirdCoords(yBirdLoc);

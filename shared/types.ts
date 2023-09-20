@@ -38,7 +38,7 @@ export interface Dimensions_I {
     BIRD_X_LOCATION: number,
     Y_FLY_UP: number,
     PIPE_VELOCITY: number,
-    BIRD_GRAVITY: number,
+    BIRD_VELOCITY: number,
 }
 
 
