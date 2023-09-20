@@ -22,7 +22,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     const [numStart, setNumStart] = useState<number>(0);
     const [numReset, setNumReset] = useState<number>(0);
     const [winner, setWinner] = useState<string>(WinState.NO_WINNER);
-
+    const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
     const snapshots = useRef<Array<GameStateResponse>>([]);
 
     function initPlayerStates(players: Array<string>): Record<string, PlayerState_I> {
@@ -56,28 +56,44 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             return "OPPONENT WON!"
         }
     }
+
+    useEffect(() => {
+        const path = "/static/audio/jump.ogg"
+        setAudio(new Audio(path));
+    }, [])
     
     useEffect(() => {
-        const handleKeyBoardEvent = (e:KeyboardEvent): void => {
-            if (KEYBINDS.find((str: string) => str === e.key) && startGame) {
-                socket.emit(Events.PlayerInput, {lobbyId: lobbyId, playerId: playerId_self});
+
+        const emitUserInput = () => {
+            socket.emit(Events.PlayerInput, {lobbyId: lobbyId, playerId: playerId_self});
+            if (playerStates[playerId_self].birdCoords.topLeft.y > 0 && !playerStates[playerId_self].hasCollided) {
+                audio?.play()
             }
         }
 
-        const handleTouchEvent = (): void => {
+        const handleKeyBoardEvent = (e: KeyboardEvent): void => {
+            if (KEYBINDS.find((str: string) => str === e.key) && startGame) {
+                if (e.repeat) { return }
+                emitUserInput();
+            }
+        }
+
+        const handleInputEvent = (): void => {
             if (startGame) {
-                socket.emit(Events.PlayerInput, {lobbyId: lobbyId, playerId: playerId_self});
+                emitUserInput();
             }
         }
 
         window.addEventListener("keydown", handleKeyBoardEvent);
-        window.addEventListener("touchstart", handleTouchEvent);
+        window.addEventListener("touchstart", handleInputEvent);
+        window.addEventListener("click", handleInputEvent);
         return () => {
             window.removeEventListener("keydown", handleKeyBoardEvent);
-            window.removeEventListener("touchstart", handleTouchEvent);
+            window.removeEventListener("touchstart", handleInputEvent);
+            window.removeEventListener("click", handleInputEvent);
 
         };
-    },[lobbyId, playerId_self, startGame, socket])
+    },[lobbyId, playerId_self, startGame, socket, playerStates, audio])
 
     useEffect(() => {
         if (!startGame) {
@@ -159,7 +175,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     useEffect(() => {
         let gapId: number = 0;
         let birdId: number = 0;
-        const INTERPOLATE_VELOCITY: number = 0.5;
+        const INTERPOLATE_VELOCITY: number = 1;
 
         const interpolatePipe = (gapCoords: BoxCoordinates, maxGapCoords: BoxCoordinates, accumulator: number): void => {
             const start = performance.now();
@@ -173,20 +189,26 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             }
         }
 
-        const interpolateBird = (birdCoords: BoxCoordinates, maxBirdCoords: BoxCoordinates, accumulator: number): void => {
+        const interpolateBird = (states: Record<string, PlayerState_I>, accumulator: number): void => {
+            const newState = {
+                ...playerStates
+            }
             const start = performance.now();
-            const newBirdCoords: BoxCoordinates = calculateNewBirdCoords(birdCoords, INTERPOLATE_VELOCITY);
-            const accumulated = performance.now() - start + accumulator;
-            if (accumulated < game_tick && newBirdCoords.topLeft.y < maxBirdCoords.topLeft.y) {
-                const newState: Record<string, PlayerState_I> = {
-                    ...playerStates,
-                    [playerId_self]: {
-                        ...playerStates[playerId_self],
-                        birdCoords: newBirdCoords,
-                    }
+            players.forEach((player: string) => {
+                const snapshotPlayerCoords = states[player].birdCoords;
+                const maxBirdCoords: BoxCoordinates = calculateNewBirdCoords(snapshotPlayerCoords);
+                const newBirdCoords: BoxCoordinates = calculateNewBirdCoords(snapshotPlayerCoords, INTERPOLATE_VELOCITY);
+                if (snapshotPlayerCoords.topLeft.y > 0 && newBirdCoords.topLeft.y < maxBirdCoords.topLeft.y && !states[player].hasCollided) {
+                    newState[player].birdCoords = newBirdCoords;
                 }
+                else {
+                    console.log(player, newState[playerId_self].birdCoords);
+                }
+            })
+            const accumulated = performance.now() - start + accumulator;
+            if (accumulated < game_tick) {
                 setPlayerStates(newState);
-                birdId = window.requestAnimationFrame(() => interpolateBird(newBirdCoords, maxBirdCoords, accumulated));
+                birdId = window.requestAnimationFrame(() => interpolateBird(newState, accumulated));
             }
         }
 
@@ -200,12 +222,8 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
                 interpolatePipe(snapshotGapCoords, maxGapCoords, 0);
             }
 
-            const snapshotPlayerCoords = snapshot.players[playerId_self].birdCoords;
-            const maxBirdCoords: BoxCoordinates = calculateNewBirdCoords(snapshotPlayerCoords);
-            if (snapshotPlayerCoords.topLeft.y > 0) {
-                window.cancelAnimationFrame(birdId);
-                interpolateBird(snapshotPlayerCoords, maxBirdCoords, 0);
-            }
+            // window.cancelAnimationFrame(birdId);
+            // interpolateBird(snapshot.players, 0);
 
         }
         else {

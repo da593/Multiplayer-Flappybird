@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo, useMemo } from 'react';
 import { BoxCoordinates, GAME_DIMENSIONS } from '@flappyblock/shared';
 import Image from 'next/image';
 
@@ -8,7 +8,7 @@ interface Props {
     hasCollided: boolean;
 }
 
-export function Bird({isSelf, birdCoords, hasCollided}:Props) {
+export const Bird = memo(function Bird({isSelf, birdCoords, hasCollided}:Props) {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const canvas = canvasRef.current;
@@ -18,9 +18,23 @@ export function Bird({isSelf, birdCoords, hasCollided}:Props) {
     const [imgLoad, setImgLoad] = useState<boolean>(false);
     const img = imgRef.current;
 
+    const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+    const playAudio = useMemo(() => {
+        if (hasCollided) {
+            audio?.play();
+        }
+    }, [hasCollided, audio])
+
     const onLoadCallBack = (): void => {
         setImgLoad(true);
     }
+
+
+    
+    useEffect(() => {
+        const path = "/static/audio/die.ogg"
+        setAudio(new Audio(path));
+    }, [])
 
     useEffect(() => {
         
@@ -44,14 +58,17 @@ export function Bird({isSelf, birdCoords, hasCollided}:Props) {
                 }
 
                 if (hasCollided) {
-                    context.beginPath();
-    
-                    context.moveTo(birdCoords.topLeft.x, birdCoords.topLeft.y);
-                    context.lineTo(birdCoords.botRight.x, birdCoords.botRight.y);
-                
-                    context.moveTo(birdCoords.botLeft.x, birdCoords.botLeft.y);
-                    context.lineTo(birdCoords.topRight.x, birdCoords.topRight.y);
-                    context.stroke();
+                    playAudio
+                    if (context) {
+                        context.beginPath();
+            
+                        context.moveTo(birdCoords.topLeft.x, birdCoords.topLeft.y);
+                        context.lineTo(birdCoords.botRight.x, birdCoords.botRight.y);
+                    
+                        context.moveTo(birdCoords.botLeft.x, birdCoords.botLeft.y);
+                        context.lineTo(birdCoords.topRight.x, birdCoords.topRight.y);
+                        context.stroke();
+                    }
                 }
             }
         }
@@ -60,7 +77,7 @@ export function Bird({isSelf, birdCoords, hasCollided}:Props) {
             draw(birdCoords);
         }
 
-    },[context, img, imgLoad, birdCoords, isSelf, hasCollided])
+    },[context, img, imgLoad, birdCoords, isSelf])
 
     return (
         <>
@@ -78,4 +95,4 @@ export function Bird({isSelf, birdCoords, hasCollided}:Props) {
         />
         </>
     )
-}
+})

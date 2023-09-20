@@ -18,8 +18,7 @@ export function BoardBackground() {
 
     useEffect(() => {
         if (context && img && imgLoad) {
-            const offset = 5; //Remove black edges of background image
-            context.drawImage(img, 0, 0, GAME_DIMENSIONS.GAME_WIDTH, GAME_DIMENSIONS.GAME_HEIGHT + offset);
+            context.drawImage(img, 0, 0, GAME_DIMENSIONS.GAME_WIDTH, GAME_DIMENSIONS.GAME_HEIGHT);
         }
 
     }, [context, img, imgLoad]) 
