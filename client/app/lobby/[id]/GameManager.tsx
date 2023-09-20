@@ -78,19 +78,17 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             }
         }
 
-        const handleInputEvent = (): void => {
+        const handleMouseEvent = (): void => {
             if (startGame) {
                 emitUserInput();
             }
         }
 
         window.addEventListener("keydown", handleKeyBoardEvent);
-        window.addEventListener("touchstart", handleInputEvent);
-        window.addEventListener("click", handleInputEvent);
+        window.addEventListener("click", handleMouseEvent);
         return () => {
             window.removeEventListener("keydown", handleKeyBoardEvent);
-            window.removeEventListener("touchstart", handleInputEvent);
-            window.removeEventListener("click", handleInputEvent);
+            window.removeEventListener("click", handleMouseEvent);
 
         };
     },[lobbyId, playerId_self, startGame, socket, playerStates, audio])
