@@ -41,3 +41,8 @@ export enum ERROR {
     LOBBY_NOT_FOUND = "LOBBY_NOT_FOUND",
     NO_PLAYER = "NO_PLAYER",
 }
+
+export enum AudioCue{
+    DIE = "die",
+    JUMP = "jump",
+}
