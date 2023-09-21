@@ -5,7 +5,6 @@ export function useAudio(type: AudioCue): HTMLAudioElement | null {
     const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
     useEffect(() => {
-        console.log("s")
         const enum extensions {
             ogg = ".ogg",
             wav = ".wav"
