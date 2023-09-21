@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, memo, useMemo } from 'react';
-import { BoxCoordinates, GAME_DIMENSIONS } from '@flappyblock/shared';
+import { AudioCue, BoxCoordinates, GAME_DIMENSIONS } from '@flappyblock/shared';
 import Image from 'next/image';
+import { useAudio } from '@/hooks/useAudio';
 
 interface Props {
     birdCoords: BoxCoordinates;
@@ -18,7 +19,8 @@ export const Bird = memo(function Bird({isSelf, birdCoords, hasCollided}:Props) 
     const [imgLoad, setImgLoad] = useState<boolean>(false);
     const img = imgRef.current;
 
-    const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+    const audio = useAudio(AudioCue.DIE);
+    
     const playAudio = useMemo(() => {
         if (hasCollided) {
             audio?.play();
@@ -28,13 +30,6 @@ export const Bird = memo(function Bird({isSelf, birdCoords, hasCollided}:Props) 
     const onLoadCallBack = (): void => {
         setImgLoad(true);
     }
-
-
-    
-    useEffect(() => {
-        const path = "/static/audio/die.ogg"
-        setAudio(new Audio(path));
-    }, [])
 
     useEffect(() => {
         

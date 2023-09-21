@@ -1,9 +1,10 @@
 import  {useState,useEffect, useContext, useRef} from "react";
 import Link from 'next/link';
-import { BoxCoordinates, EndGameData, Events, GAME_DIMENSIONS, GameData, GameStateResponse, INITIAL_STATE, KEYBINDS, PipeState_I, PlayerState_I, ReadyCheck, WinState, calculateNewBirdCoords, calculateNewGapCoords, game_tick } from "@flappyblock/shared";
+import { AudioCue, BoxCoordinates, EndGameData, Events, GameData, GameStateResponse, INITIAL_STATE, KEYBINDS, PipeState_I, PlayerState_I, ReadyCheck, WinState, calculateNewBirdCoords, calculateNewGapCoords, game_tick } from "@flappyblock/shared";
 import { SocketContext } from "hooks/socketContext";
 import { BoardGame } from "components/BoardGame";
 import { NavigationMenu } from "components/NavigationMenu";
+import { useAudio } from "@/hooks/useAudio";
 
 interface Props {
     lobbyId: string
@@ -22,7 +23,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
     const [numStart, setNumStart] = useState<number>(0);
     const [numReset, setNumReset] = useState<number>(0);
     const [winner, setWinner] = useState<string>(WinState.NO_WINNER);
-    const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+    const audio = useAudio(AudioCue.JUMP);
     const snapshots = useRef<Array<GameStateResponse>>([]);
 
     function initPlayerStates(players: Array<string>): Record<string, PlayerState_I> {
@@ -57,11 +58,6 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
         }
     }
 
-    useEffect(() => {
-        const path = "/static/audio/jump.ogg"
-        setAudio(new Audio(path));
-    }, [])
-    
     useEffect(() => {
 
         const emitUserInput = () => {
