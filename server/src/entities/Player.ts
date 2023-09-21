@@ -6,6 +6,7 @@ export class Player extends Entity {
     score: number;
     hasCollided: boolean;
     speed: number;
+    readonly maxSpeed: number;
     
     constructor(id: string) {
         super(id);
@@ -13,6 +14,7 @@ export class Player extends Entity {
         this.score = INITIAL_STATE.player.score;
         this.hasCollided = INITIAL_STATE.player.hasCollided;
         this.speed = 0;
+        this.maxSpeed = 30;
     }
 
     getPlayerState(): PlayerState_I {
@@ -46,7 +48,7 @@ export class Player extends Entity {
 
     update(): void {
         const currBirdCoords = this.birdCoords;
-        this.speed += GAME_DIMENSIONS.BIRD_VELOCITY;
+        this.speed < this.maxSpeed ? this.speed += GAME_DIMENSIONS.BIRD_VELOCITY : null;
         this.birdCoords = calculateNewBirdCoords(currBirdCoords, this.speed);
     }
     
