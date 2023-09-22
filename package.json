@@ -9,8 +9,7 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-server": "(cd server && npm run build) && (cd ..) && (cd shared && npm run build)",
-    "build-all ": "npm run build-server && (cd client && npm run build)"
+    "build-server": "(cd server && npm run build) && (cd ..) && (cd shared && npm run build)"
   },
   "repository": {
     "type": "git",
