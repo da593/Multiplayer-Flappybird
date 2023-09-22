@@ -122,7 +122,7 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
 
         socket.on(Events.UpdateGame, (data: GameData) => {
             snapshots.current.push(data.state);
-            if (snapshots.current.length >= 4) {
+            if (snapshots.current.length >= 2) {
                 const snapshot: GameStateResponse | undefined =snapshots.current.shift();
                 if (snapshot) {
                     setSnapshot(snapshot);
@@ -183,51 +183,21 @@ export function GameManager({lobbyId, playerId_self, players}:Props) {
             }
         }
 
-        const interpolateBird = (states: Record<string, PlayerState_I>, accumulator: number): void => {
-            const newState = {
-                ...playerStates
-            }
-            const start = performance.now();
-            players.forEach((player: string) => {
-                const snapshotPlayerCoords = states[player].birdCoords;
-                const maxBirdCoords: BoxCoordinates = calculateNewBirdCoords(snapshotPlayerCoords);
-                const newBirdCoords: BoxCoordinates = calculateNewBirdCoords(snapshotPlayerCoords, INTERPOLATE_VELOCITY);
-                if (snapshotPlayerCoords.topLeft.y > 0 && newBirdCoords.topLeft.y < maxBirdCoords.topLeft.y && !states[player].hasCollided) {
-                    newState[player].birdCoords = newBirdCoords;
-                }
-                else {
-                    console.log(player, newState[playerId_self].birdCoords);
-                }
-            })
-            const accumulated = performance.now() - start + accumulator;
-            if (accumulated < game_tick) {
-                setPlayerStates(newState);
-                birdId = window.requestAnimationFrame(() => interpolateBird(newState, accumulated));
-            }
-        }
-
         if (!endGame && snapshot && startGame) {
             const snapshotGapCoords = snapshot.pipe.gapCoords;
             const maxGapCoords: BoxCoordinates = calculateNewGapCoords(snapshotGapCoords);
  
-
             if (snapshotGapCoords.topRight.x > 0) {
                 window.cancelAnimationFrame(gapId);
                 interpolatePipe(snapshotGapCoords, maxGapCoords, 0);
             }
-
-            // window.cancelAnimationFrame(birdId);
-            // interpolateBird(snapshot.players, 0);
-
         }
         else {
             window.cancelAnimationFrame(gapId);
-            window.cancelAnimationFrame(birdId);
         }
 
         return () => {
             window.cancelAnimationFrame(gapId);
-            window.cancelAnimationFrame(birdId);
         }
 
     }, [snapshot, endGame, startGame, playerId_self]);
