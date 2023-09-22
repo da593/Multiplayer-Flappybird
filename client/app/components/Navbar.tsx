@@ -20,7 +20,7 @@ export function Navbar() {
             <ul className="nav-list">
                 <div className="flex-left">
                     <li>
-                <Link href="/" onClick={() => leaveLobby()} style={{textDecoration:"underline"}}>FlappyBlock</Link>
+                <Link href="/" onClick={() => leaveLobby()} style={{textDecoration:"underline"}}>FlappyBird</Link>
                     </li>
                     <li>
                         <ConnectionState/>
